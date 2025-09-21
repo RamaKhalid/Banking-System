@@ -17,3 +17,38 @@ class Customer:
         print(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
 
     
+class Bank:
+    def __init__(self, file):
+        self.file = file
+        self.customers = []
+
+    def git_customers(self):
+        try:
+            with open(self.file, "r") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    self.customers.append(row)
+
+            for info in self.customers:
+                print(info)
+        except FileNotFoundError:
+            print('file not found:(')
+
+    def save(self):
+        with open(self.file, 'a',newline="" ) as file:
+            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+            writer = csv.DictWriter(file, fieldnames= fieldnames)
+            writer.writerows({
+                'account_id':info.account_id, 
+                'first_name': info.first_name ,
+                'last_name': info.last_name,
+                'password': info.password,
+                'balance_checking': info.balance_checking,
+                'balance_savings': info.balance_savings
+
+            } 
+                for info in self.customers)
+
+    def add_customer(self,customer):
+        self.customers.append(customer)
+        self.save()     
