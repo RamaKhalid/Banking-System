@@ -92,7 +92,7 @@ class Bank:
                         # print(line)
                         line.update(self.customers)
                         # print(line)
-                print(users)
+                # print(users)
                 self.save_update(users)
 
 
@@ -140,13 +140,25 @@ class Account (Bank):
             price = int(price)
             if self.islogin == False:
                 # raise loginError
-                print('pleas login first')
+                print('please login first')
             else:
-                for info in self.customers:
-                    if price>= info.balance_savings:
-                        print('You have overdraft so a overdraft protection fee of 35 SAR')
-                        info.balance_savings = info.balance_savings - price -35
-                        # if info.balance_savings 
+                # for info in self.customers:
+                current_balance_checking =float(self.customers.get("balance_checking"))
+                if price>= current_balance_checking:
+                    #add fee
+                    pass
+                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                elif price > 0:
+                    current_balance_checking -= price
+                    self.customers.get("balance_checking")
+                    for info in self.customers:
+                        if info == 'balance_checking':
+                            self.customers.update({info:current_balance_checking })
+                    # print(self.customers)
+                    # self.customers
+                    self.update_customer( self.customers)
+                else:
+                    print('number must be >0')
 
 
 
@@ -159,11 +171,24 @@ class Account (Bank):
                 # raise loginError
                 print('please login first')
             else:
-                for info in self.customers:
-                    if price>= info.balance_checking:
-                        print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
-                        info.balance_checking = info.balance_checking - price -35
-                        # if info.balance_checking
+                # for info in self.customers:
+                current_balance_savings =float(self.customers.get("balance_savings"))
+                if price>= current_balance_savings:
+                    #add error handrling
+                    pass
+                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                elif price > 0:
+                    current_balance_savings -= price
+                    self.customers.get("balance_savings")
+                    for info in self.customers:
+                        if info == 'balance_savings':
+                            self.customers.update({info:current_balance_savings })
+                    # print(self.customers)
+                    # self.customers
+                    self.update_customer( self.customers)
+                else:
+                    print('number must be >0')
+                
 
 
 
@@ -216,12 +241,15 @@ print('**** Welcome To This Bank ****')
 # first_name=input('Enter Your First Name: ')
 
 # bank.add_customer(Customer('Rama', 'Khalid', 'Rama123', 20000, 5000))
-bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
+# bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 new_account =Account('bank.csv')
 new_account.login('Rama', 'Khalid', 'Rama123')
-new_account.deposit_into_checking(500)
+# new_account.deposit_into_checking(500)
+# new_account.deposit_into_savings(500)
+new_account.withdraw_from_checking(80)
+new_account.withdraw_from_savings(80)
 # bank.update_customer()
 # print(new_account.customers)
 
