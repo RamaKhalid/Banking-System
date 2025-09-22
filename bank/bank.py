@@ -255,6 +255,38 @@ class Account (Bank):
                 print('number must be >0')
 
 
+
+
+
+    def transfer_from_checking_to_savings(self, amount):
+            amount = int(amount)
+            if amount < 1:
+                pass
+                # raise error
+            else:
+                new_balance_checking =float(self.customers.get("balance_checking"))
+                if amount>= new_balance_checking:
+                    #add error handrling
+                    pass
+                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                elif amount > 0:
+                    new_balance_checking -= amount
+                    current_balance_savings =float(self.customers.get("balance_savings"))
+                    current_balance_savings += amount
+                    # self.customers.get("balance_savings")
+                    for info in self.customers:
+                        if info == 'balance_savings':
+                            self.customers.update({info:current_balance_savings })
+                        if info == 'balance_checking':
+                            self.customers.update({info:new_balance_checking })
+                        
+                    # print(self.customers)
+                    # self.customers
+                    self.update_customer( self.customers)
+                else:
+                    print('number must be >0')
+
+
     
 
 
@@ -280,7 +312,8 @@ new_account.login('Rama', 'Khalid', 'Rama123')
 # new_account.deposit_into_savings(500)
 # new_account.withdraw_from_checking(80)
 # new_account.withdraw_from_savings(80)
-new_account.transfer_from_savings_to_checking(20)
+# new_account.transfer_from_savings_to_checking(20)
+new_account.transfer_from_checking_to_savings(20)
 # bank.update_customer()
 # print(new_account.customers)
 
