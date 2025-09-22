@@ -49,6 +49,20 @@ class Bank:
                 'balance_savings': info.balance_savings
             } 
                 for info in self.customers)
+    
+    def save_update(self,list):
+        with open(self.file, 'w',newline="" ) as file:
+            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+            writer = csv.DictWriter(file, fieldnames= fieldnames)
+            writer.writerows({
+                'account_id':info['account_id'], 
+                'first_name': info['first_name'] ,
+                'last_name': info['last_name'],
+                'password': info['password'],
+                'balance_checking': info['balance_checking'],
+                'balance_savings': info['balance_savings']
+            } 
+                for info in list)
 
     def add_customer(self,customer):
         self.customers.append(customer)
@@ -59,16 +73,37 @@ class Bank:
             if str in i.first_name:
                 i.info()
 
-    def update_customer(self):
-        with open('bank.csv', 'r')as file:
-            reader = csv.DictReader(file)
+    def update_customer(self, data):
+            # try:
+                users= []
+                try:
+                    with open(self.file, "r") as file:
+                        reader = csv.DictReader(file)
+                        for row in reader:
+                            users.append(row)
+                    # for info in self.customers:
+                    #     return info
+                except FileNotFoundError:
+                    print('file not found:(')
+               
+                # print(users)
+                for line in users:
+                    if line['first_name'] == data['first_name']:
+                        # print(line)
+                        line.update(self.customers)
+                        # print(line)
+                print(users)
+                self.save_update(users)
+            # except AttributeError:
+            #     print('oppss')
 
-            with open('bank.csv', 'a') as file:
-                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
-            writer = csv.DictWriter(file, fieldnames= fieldnames)
-            for line in reader:
-                if line['first_name'] == self.customers.get('first_name'):
-                    print (line['balance_checking'])
+        # with open('bank.csv', 'r')as file:
+        #     reader = csv.DictReader(file)
+
+        #     with open('bank.csv', 'a') as file:
+        #         fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+        #     writer = csv.DictWriter(file, fieldnames= fieldnames)
+            
                 
                     # writer.writerow({
                     #         'account_id':info.account_id, 
@@ -80,10 +115,7 @@ class Bank:
                     #     } 
                     #         for info in self.customers)
 
-                
-                    
 
-    
 
 
 class Account (Bank):
@@ -91,9 +123,9 @@ class Account (Bank):
         super().__init__(file)
         self.islogin = False
         
+    
 
     def login(self,first_name, last_name, password ):
-        firsts= []
         print('hello from here')
         try:
             self.customers= self.get_customers()
@@ -145,7 +177,7 @@ class Account (Bank):
             price = int(price)
             if self.islogin == False:
                 # raise loginError
-                print('pleas login first')
+                print('please login first')
             else:
                 for info in self.customers:
                     if price>= info.balance_checking:
@@ -156,13 +188,21 @@ class Account (Bank):
 
 
     def deposit_into_savings(self, amount):
+        amount = int(amount)
         if amount < 1:
             pass
             # raise error
         else:
+            new_balance_savings =int(self.customers.get("balance_savings"))
+            new_balance_savings += amount
+            self.customers.get("balance_savings")
             for info in self.customers:
-                info.balance_savings += amount
-                self.save() 
+                if info == 'balance_savings':
+                    self.customers.update({info:new_balance_savings })
+            # print(self.customers)
+            # self.customers
+            self.update_customer( self.customers)
+
 
     def deposit_into_checking(self, amount):
         amount = int(amount)
@@ -176,9 +216,9 @@ class Account (Bank):
             for info in self.customers:
                 if info == 'balance_checking':
                     self.customers.update({info:new_balance_checking })
-            print(self.customers)
+            # print(self.customers)
             # self.customers
-            # self.save()
+            self.update_customer( self.customers)
 
     
 
@@ -196,13 +236,13 @@ print('**** Welcome To This Bank ****')
 # first_name=input('Enter Your First Name: ')
 
 # bank.add_customer(Customer('Rama', 'Khalid', 'Rama123', 20000, 5000))
-# bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
+bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 new_account =Account('bank.csv')
 new_account.login('Rama', 'Khalid', 'Rama123')
 new_account.deposit_into_checking(500)
-new_account.update_customer()
+# bank.update_customer()
 # print(new_account.customers)
 
 # print(bank.get_customers())
