@@ -314,8 +314,48 @@ class Account (Bank):
                 user_checking =float(user.get("balance_checking"))
                 user_checking += amount
                 for info in self.customers:
-                    if info == 'balance_savings':
+                    if info == 'balance_checking':
                         self.customers.update({info:customer_balance_checking })
+                        break
+                self.update_customer( self.customers)
+                for info in user:
+                    # print(info) 
+                    if info == 'balance_checking':
+                        user.update({info:user_checking })
+                        # print(user)
+                        break
+                self.update_customer(user)
+
+
+
+
+
+    def transfer_savings_to_another_account(self, amount, user_account_id):
+        users=[]
+        user={}
+        amount = int(amount)
+        if amount < 1:
+            pass
+            # raise error
+        else:
+            users= self.get_customers()
+            for line in users:
+                if user_account_id in line['account_id']:
+                    user.update(line)
+                    break
+            # print(user)
+            customer_balance_savings =float(self.customers.get("balance_savings"))
+            if amount>= customer_balance_savings:
+                #add error handrling
+                pass
+                # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+            else:
+                customer_balance_savings-= amount
+                user_checking =float(user.get("balance_checking"))
+                user_checking += amount
+                for info in self.customers:
+                    if info == 'balance_savings':
+                        self.customers.update({info:customer_balance_savings })
                         break
                 self.update_customer( self.customers)
                 for info in user:
