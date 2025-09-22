@@ -9,7 +9,7 @@ class Customer:
         self.last_name =last_name
         self.password =password
         self.balance_checking =balance_checking
-        self.balance_savings =balance_savings
+        self.balance_savings =None
         Customer.account_id += 1
 
     def info(self):
@@ -380,14 +380,8 @@ class Account (Bank):
 
 
 # bank = Bank('bank.csv')
-# print('**** Welcome To This Bank ****')
-# first_name=input('Enter Your First Name: ')
-# last_name=input('Enter Your last Name: ')
-# first_name=input('Enter Your First Name: ')
-# first_name=input('Enter Your First Name: ')
-# first_name=input('Enter Your First Name: ')
+# 
 
-# bank.add_customer(Customer('Rama', 'Khalid', 'Rama123', 20000, 5000))
 # bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
