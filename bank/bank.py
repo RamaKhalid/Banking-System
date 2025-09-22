@@ -14,7 +14,7 @@ class Customer:
 
     def info(self):
         #chang it to retern for the testt
-        print(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
+        return(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
 
     
 class Bank:
@@ -379,8 +379,8 @@ class Account (Bank):
 
 
 
-bank = Bank('bank.csv')
-print('**** Welcome To This Bank ****')
+# bank = Bank('bank.csv')
+# print('**** Welcome To This Bank ****')
 # first_name=input('Enter Your First Name: ')
 # last_name=input('Enter Your last Name: ')
 # first_name=input('Enter Your First Name: ')
@@ -391,15 +391,15 @@ print('**** Welcome To This Bank ****')
 # bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
-new_account =Account('bank.csv')
-new_account.login('Rama', 'Khalid', 'Rama123')
-# new_account.deposit_into_checking(500)
-# new_account.deposit_into_savings(500)
-# new_account.withdraw_from_checking(80)
-# new_account.withdraw_from_savings(80)
-# new_account.transfer_from_savings_to_checking(20)
-# new_account.transfer_from_checking_to_savings(20)
-new_account.transfer_checking_to_another_account(360, '10003' )
+# new_account =Account('bank.csv')
+# new_account.login('Rama', 'Khalid', 'Rama123')
+# # new_account.deposit_into_checking(500)
+# # new_account.deposit_into_savings(500)
+# # new_account.withdraw_from_checking(80)
+# # new_account.withdraw_from_savings(80)
+# # new_account.transfer_from_savings_to_checking(20)
+# # new_account.transfer_from_checking_to_savings(20)
+# new_account.transfer_checking_to_another_account(360, '10003' )
 # bank.update_customer()
 # print(new_account.customers)
 
