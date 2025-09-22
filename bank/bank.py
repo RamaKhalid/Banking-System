@@ -21,14 +21,15 @@ class Bank:
     def __init__(self, file):
         self.file = file
         self.customers = []
+        self.allUsers= []
 
     def get_customers(self):
         try:
             with open(self.file, "r") as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-                    self.customers.append(row)
-                return self.customers
+                    self.allUsers.append(row)
+                return self.allUsers
             # for info in self.customers:
             #     return info
         except FileNotFoundError:
@@ -287,6 +288,50 @@ class Account (Bank):
                     print('number must be >0')
 
 
+
+
+    def transfer_checking_to_another_account(self, amount, user_account_id):
+        users=[]
+        user={}
+        amount = int(amount)
+        if amount < 1:
+            pass
+            # raise error
+        else:
+            users= self.get_customers()
+            for line in users:
+                if user_account_id in line['account_id']:
+                    user.update(line)
+                    break
+            # print(user)
+            customer_balance_checking =float(self.customers.get("balance_checking"))
+            if amount>= customer_balance_checking:
+                #add error handrling
+                pass
+                # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+            else:
+                customer_balance_checking -= amount
+                user_checking =float(user.get("balance_checking"))
+                user_checking += amount
+                for info in self.customers:
+                    if info == 'balance_savings':
+                        self.customers.update({info:customer_balance_checking })
+                        break
+                self.update_customer( self.customers)
+                for info in user:
+                    # print(info) 
+                    if info == 'balance_checking':
+                        user.update({info:user_checking })
+                        # print(user)
+                        break
+                self.update_customer(user)
+                            
+                        
+
+
+            
+
+
     
 
 
@@ -313,7 +358,8 @@ new_account.login('Rama', 'Khalid', 'Rama123')
 # new_account.withdraw_from_checking(80)
 # new_account.withdraw_from_savings(80)
 # new_account.transfer_from_savings_to_checking(20)
-new_account.transfer_from_checking_to_savings(20)
+# new_account.transfer_from_checking_to_savings(20)
+new_account.transfer_checking_to_another_account(360, '10003' )
 # bank.update_customer()
 # print(new_account.customers)
 
