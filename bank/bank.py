@@ -54,6 +54,7 @@ class Bank:
         with open(self.file, 'w',newline="" ) as file:
             fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
             writer = csv.DictWriter(file, fieldnames= fieldnames)
+            writer.writeheader()
             writer.writerows({
                 'account_id':info['account_id'], 
                 'first_name': info['first_name'] ,
@@ -85,7 +86,6 @@ class Bank:
                     #     return info
                 except FileNotFoundError:
                     print('file not found:(')
-               
                 # print(users)
                 for line in users:
                     if line['first_name'] == data['first_name']:
@@ -94,26 +94,6 @@ class Bank:
                         # print(line)
                 print(users)
                 self.save_update(users)
-            # except AttributeError:
-            #     print('oppss')
-
-        # with open('bank.csv', 'r')as file:
-        #     reader = csv.DictReader(file)
-
-        #     with open('bank.csv', 'a') as file:
-        #         fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
-        #     writer = csv.DictWriter(file, fieldnames= fieldnames)
-            
-                
-                    # writer.writerow({
-                    #         'account_id':info.account_id, 
-                    #         'first_name': info.first_name ,
-                    #         'last_name': info.last_name,
-                    #         'password': info.password,
-                    #         'balance_checking': info.balance_checking,
-                    #         'balance_savings': info.balance_savings
-                    #     } 
-                    #         for info in self.customers)
 
 
 
