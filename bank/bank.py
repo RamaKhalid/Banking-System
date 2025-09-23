@@ -9,11 +9,10 @@ class Customer:
         self.last_name =last_name
         self.password =password
         self.balance_checking =balance_checking
-        self.balance_savings =None
+        self.balance_savings =balance_savings
         Customer.account_id += 1
 
     def info(self):
-        #chang it to retern for the testt
         return(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
 
     
@@ -30,26 +29,32 @@ class Bank:
                 for row in reader:
                     self.allUsers.append(row)
                 return self.allUsers
-            # for info in self.customers:
-            #     return info
         except FileNotFoundError:
-            print('file not found:(')
+            print(f'Sorry {file} file not found:(')
 
 
 #Source: https://www.youtube.com/watch?v=Kk2TkaQ2Y3Q&t=28s
     def save(self):
-        with open(self.file, 'a',newline="" ) as file:
-            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
-            writer = csv.DictWriter(file, fieldnames= fieldnames)
-            writer.writerows({
-                'account_id':info.account_id, 
-                'first_name': info.first_name ,
-                'last_name': info.last_name,
-                'password': info.password,
-                'balance_checking': info.balance_checking,
-                'balance_savings': info.balance_savings
-            } 
-                for info in self.customers)
+        try:
+            with open(self.file, 'a',newline="" ) as file:
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+                writer = csv.DictWriter(file, fieldnames= fieldnames)
+                writer.writerows({
+                    'account_id':info.account_id, 
+                    'first_name': info.first_name ,
+                    'last_name': info.last_name,
+                    'password': info.password,
+                    'balance_checking': info.balance_checking,
+                    'balance_savings': info.balance_savings
+                } 
+                    for info in self.customers)
+        except FileNotFoundError:
+            print(f'Sorry {file} file not found:(')
+        # except TypeError:
+        #     pass
+        # except IndentationError:
+        #     pass
+
     
     def save_update(self,list):
         with open(self.file, 'w',newline="" ) as file:
@@ -382,7 +387,7 @@ class Account (Bank):
 # bank = Bank('bank.csv')
 # 
 
-# bank.add_customer(Customer('sara', 'aaaa', '1221', 20000, 5000))
+# bank.add_customer(Customer('sara', 'aaaa',"jjj" , 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 # new_account =Account('bank.csv')
