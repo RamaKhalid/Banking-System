@@ -37,7 +37,7 @@ class Bank:
     def save(self):
         try:
             with open(self.file, 'a',newline="" ) as file:
-                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings', 'overdrafts']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
                 writer.writerows({
                     'account_id':info.account_id, 
@@ -45,7 +45,8 @@ class Bank:
                     'last_name': info.last_name,
                     'password': info.password,
                     'balance_checking': info.balance_checking,
-                    'balance_savings': info.balance_savings
+                    'balance_savings': info.balance_savings,
+                    'overdrafts':0
                 } 
                     for info in self.customers)
         except FileNotFoundError:
@@ -58,7 +59,7 @@ class Bank:
     
     def save_update(self,list):
         with open(self.file, 'w',newline="" ) as file:
-            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings']
+            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts']
             writer = csv.DictWriter(file, fieldnames= fieldnames)
             writer.writeheader()
             writer.writerows({
@@ -67,7 +68,8 @@ class Bank:
                 'last_name': info['last_name'],
                 'password': info['password'],
                 'balance_checking': info['balance_checking'],
-                'balance_savings': info['balance_savings']
+                'balance_savings': info['balance_savings'],
+                'overdrafts': info['overdrafts']
             } 
                 for info in list)
 
@@ -152,31 +154,42 @@ class Account (Bank):
             print('entered nonono')
 
     def overdraft_Protection(self, balance, amount):
-        # if balance<0:
-
-
+        
         new_balance =float(balance)
         new_balance -= amount
         if new_balance < -100:
             print('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)' )
             return balance
-        elif balance>0 and new_balance<0:
+        elif balance>=0 and new_balance<0:
             print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
             # Find better message
-            charge = input('To continue Enter Y or N to stop')
+            charge = input('To continue Enter Y or N to stop: ')
             charge = charge.upper()
             if charge == 'Y':
                 print('A 35$ have been deduct from you account, Please Pay Your Fee As Soon As possible ')
                 new_balance -= 35
+                self.overdrafts_count()
+                # print(f' this is overdrafts: {self.customers['overdrafts']}')
                 return new_balance
             if charge == 'N':
                 print('Your Transaction is stoped')
                 return balance
         elif balance <0 and new_balance>= -100:
+            self.overdrafts_count()
             return new_balance
 
 
-        
+    def overdrafts_count(self):
+        overdrafts = self.customers['overdrafts']
+        overdrafts = int(overdrafts)
+        if overdrafts== 2:
+            print('you over overdrafts U_U Your account will be deactivate ^3^')
+        else:
+            overdrafts +=1
+            for info in self.customers:
+                if info == 'overdrafts':
+                    self.customers.update({info:overdrafts})
+
 
 
 #ADD THE Overdraft Protection 
@@ -418,7 +431,7 @@ new_account =Account('bank.csv')
 new_account.login('Rama', 'Khalid', 'Rama123')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
-new_account.withdraw_from_checking(80)
+new_account.withdraw_from_checking(20)
 # # new_account.withdraw_from_savings(80)
 # # new_account.transfer_from_savings_to_checking(20)
 # # new_account.transfer_from_checking_to_savings(20)
