@@ -40,34 +40,35 @@ while True:
                 except MissingValue as e:
                     print(e)
             new_account.login(first_name, last_name, password)
-            while True:
-                print(f'\n**** Welcome {first_name}👋 ****')
-                print('What would you like to do?')
-                print('1. withdraw Money')
-                print('2. Deposit Money')
-                print('3. Transfer Money')
-                print('4. See My Account information')
-                print('5. Go BAck to the main page')
-                option= input("\nPlease Enter The Service Number: ")
-                option= int(option)
+            if new_account.islogin == True:
+                while True:
+                    print(f'\n**** Welcome {first_name}👋 ****')
+                    print('What would you like to do?')
+                    print('1. withdraw Money')
+                    print('2. Deposit Money')
+                    print('3. Transfer Money')
+                    print('4. See My Account information')
+                    print('5. Go BAck to the main page')
+                    option= input("\nPlease Enter The Service Number: ")
+                    option= int(option)
 
-                if option == 1:
-                    while True:
-                        print('\nChoice Your Account ')
-                        print('1. withdraw Money from checking')
-                        print('2. withdraw Money from savings')
-                        print('5. Go BAck to the Services page')
-                        option= input("\nPlease Enter The Service Number: ")
-                        option= int(option)
-                        if option == 1:
-                            print('\nwithdraw Money from checking')
-                            amount = input('Pleas Enter the Amount You Like To Withdraw: ')
-                            amount =int(amount)
+                    if option == 1:
+                        while True:
+                            print('\nChoice Your Account ')
+                            print('1. withdraw Money from checking')
+                            print('2. withdraw Money from savings')
+                            print('5. Go BAck to the Services page')
+                            option= input("\nPlease Enter The Service Number: ")
+                            option= int(option)
+                            if option == 1:
+                                print('\nwithdraw Money from checking')
+                                amount = input('Pleas Enter the Amount You Like To Withdraw: ')
+                                amount =int(amount)
 
-                            new_account.withdraw_from_checking(amount)
+                                new_account.withdraw_from_checking(amount)
 
-                        if option == 2:
-                            pass
+                            if option == 2:
+                                pass
 
 
                 if option == 2:

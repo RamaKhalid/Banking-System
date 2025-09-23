@@ -112,39 +112,51 @@ class Account (Bank):
     
 
     def login(self,first_name, last_name, password ):
+        firsts=[]
+        lasts=[]
+        passwords=[]
         print('hello from here')
         try:
             self.customers= self.get_customers()
+            #ASK CONOR ABOUT THIS!!!!!!!!!!!!!!!!!!!!!!!
             for info in self.customers:
-                # firsts.append(info['first_name'])
-                # print(info['first_name'])
+                firsts.append(info['first_name'])
+                lasts.append(info['last_name'])
+                passwords.append(info['password'])
                 if first_name in info['first_name']:
                     if last_name in info['last_name']:
                         if password in info['password']:
-                            self.islogin = True
                             self.customers =info
-                            # print(self.customers)
-                            print(f'Welcome {first_name}👋, you have been loged in successfully🎉 ')
-                #         else:
-                #             print('pass no')
-                #             # raise ValueError
-                #     else:
-                #         print('entered flast no')
-                #         # raise ValueError
-                # else:
-                #     print('entered first no')
 
+            if first_name in firsts:
+                if last_name in lasts:
+                    if password in passwords:
+                        self.islogin = True
+                        # self.customers =info
+                        # print(self.customers)
+                        print(f'Welcome {first_name}👋, you have been loged in successfully🎉 ')
+                    else:
+                        print('pass no')
+                        # raise ValueError
+                        return
+                else:
+                    print('entered last no')
                     # raise ValueError
+                    return
+            else:
+                print('entered first no')
+                return
+                # raise ValueError
         except ValueError:
             #how to rase diffrent message for diffrent error???
             print('entered nonono')
 
-    def overdraft_Protection(self,balance, amount):
+    def overdraft_Protection(self, balance, amount):
         new_balance =float(balance)
         new_balance -= amount
         if new_balance < -100:
             print('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)' )
-            return
+            return balance
         else:
             print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
             # Find better message
@@ -159,7 +171,6 @@ class Account (Bank):
                 return balance
 
 
-
 #ADD THE Overdraft Protection 
     def withdraw_from_checking(self, price):
             # HANNDEL THIS ERROR*********************
@@ -168,10 +179,9 @@ class Account (Bank):
                 # raise loginError
                 print('please login first')
             else:
-                # for info in self.customers:
                 current_balance_checking =float(self.customers.get("balance_checking"))
                 if price > current_balance_checking:
-                    new_balance_checking = self.overdraft_Protection(self,current_balance_checking , price)
+                    new_balance_checking = self.overdraft_Protection(current_balance_checking , price)
                     if new_balance_checking < current_balance_checking:
                         for info in self.customers:
                             if info == 'balance_checking':
@@ -192,8 +202,6 @@ class Account (Bank):
                     self.update_customer( self.customers)
                 else:
                     print('number must be >0')
-
-
 
 
     #ADD THE Overdraft Protection 
@@ -221,8 +229,6 @@ class Account (Bank):
                     self.update_customer( self.customers)
                 else:
                     print('number must be >0')
-                
-
 
 
     def deposit_into_savings(self, amount):
@@ -288,9 +294,6 @@ class Account (Bank):
                 print('number must be >0')
 
 
-
-
-
     def transfer_from_checking_to_savings(self, amount):
             amount = int(amount)
             if amount < 1:
@@ -318,8 +321,6 @@ class Account (Bank):
                     self.update_customer( self.customers)
                 else:
                     print('number must be >0')
-
-
 
 
     def transfer_checking_to_another_account(self, amount, user_account_id):
@@ -359,9 +360,6 @@ class Account (Bank):
                 self.update_customer(user)
 
 
-
-
-
     def transfer_savings_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
@@ -397,31 +395,22 @@ class Account (Bank):
                         # print(user)
                         break
                 self.update_customer(user)
-                            
-                        
-
-
-            
-
-
-    
 
 
 
 
 
-
-# bank = Bank('bank.csv')
+bank = Bank('bank.csv')
 # 
 
 # bank.add_customer(Customer('sara', 'aaaa',"jjj" , 20000, 5000))
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
-# new_account =Account('bank.csv')
-# new_account.login('Rama', 'Khalid', 'Rama123')
+new_account =Account('bank.csv')
+new_account.login('Rama', 'Khalid', 'Rama123')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
-# # new_account.withdraw_from_checking(80)
+new_account.withdraw_from_checking(23000)
 # # new_account.withdraw_from_savings(80)
 # # new_account.transfer_from_savings_to_checking(20)
 # # new_account.transfer_from_checking_to_savings(20)
