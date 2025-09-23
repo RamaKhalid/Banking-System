@@ -98,9 +98,9 @@ class Bank:
                     print('file not found:(')
                 # print(users)
                 for line in users:
-                    if line['first_name'] == data['first_name']:
+                    if line['account_id'] == data['account_id']:
                         # print(line)
-                        line.update(self.customers)
+                        line.update(data)
                         # print(line)
                 # print(users)
                 self.save_update(users)
@@ -156,7 +156,6 @@ class Account (Bank):
             print('entered nonono')
 
     def overdraft_Protection(self, balance, amount):
-        
         new_balance =float(balance)
         new_balance -= amount
         if new_balance < -100:
@@ -217,9 +216,8 @@ class Account (Bank):
                                     self.customers.update({info:new_balance_checking })
                             self.update_customer( self.customers)
                         else:
-
                             pass
-                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+
                     elif price > 0 and price <= current_balance_checking :
                         current_balance_checking -= price
                         self.customers.get("balance_checking")
@@ -337,13 +335,18 @@ class Account (Bank):
                     pass
                     # raise error
                 else:
-                    new_balance_checking =float(self.customers.get("balance_checking"))
-                    if amount>= new_balance_checking:
-                        #add error handrling
-                        pass
-                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    current_balance_checking =float(self.customers.get("balance_checking"))
+                    if amount>= current_balance_checking:
+                        new_balance_checking = self.overdraft_Protection(current_balance_checking , price)
+                        if new_balance_checking < current_balance_checking:
+                            for info in self.customers:
+                                if info == 'balance_checking':
+                                    self.customers.update({info:new_balance_checking })
+                            self.update_customer( self.customers)
+                        else:
+                            pass
                     elif amount > 0:
-                        new_balance_checking -= amount
+                        current_balance_checking -= amount
                         current_balance_savings =float(self.customers.get("balance_savings"))
                         current_balance_savings += amount
                         # self.customers.get("balance_savings")
@@ -351,7 +354,7 @@ class Account (Bank):
                             if info == 'balance_savings':
                                 self.customers.update({info:current_balance_savings })
                             if info == 'balance_checking':
-                                self.customers.update({info:new_balance_checking })
+                                self.customers.update({info:current_balance_checking })
                             
                         # print(self.customers)
                         # self.customers
@@ -384,9 +387,14 @@ class Account (Bank):
                     # print(user)
                     customer_balance_checking =float(self.customers.get("balance_checking"))
                     if amount>= customer_balance_checking:
-                        #add error handrling
-                        pass
-                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                        new_balance_checking = self.overdraft_Protection(customer_balance_checking , amount)
+                        if new_balance_checking < customer_balance_checking:
+                            for info in self.customers:
+                                if info == 'balance_checking':
+                                    self.customers.update({info:new_balance_checking })
+                            self.update_customer( self.customers)
+                        else:
+                            pass
                     else:
                         customer_balance_checking -= amount
                         user_checking =float(user.get("balance_checking"))
@@ -465,11 +473,11 @@ new_account =Account('bank.csv')
 new_account.login('Rama', 'Khalid', 'Rama123')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
-new_account.withdraw_from_checking(20)
+# new_account.withdraw_from_checking(20)
 # # new_account.withdraw_from_savings(80)
 # # new_account.transfer_from_savings_to_checking(20)
 # # new_account.transfer_from_checking_to_savings(20)
-# new_account.transfer_checking_to_another_account(360, '10003' )
+new_account.transfer_savings_to_another_account(2000, '10005' )
 # bank.update_customer()
 # print(new_account.customers)
 
