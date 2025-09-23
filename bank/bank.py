@@ -124,7 +124,7 @@ class Account (Bank):
                             self.islogin = True
                             self.customers =info
                             # print(self.customers)
-                            print('you have been loged in ')
+                            print(f'Welcome {first_name}👋, you have been loged in successfully🎉 ')
                 #         else:
                 #             print('pass no')
                 #             # raise ValueError
@@ -139,9 +139,29 @@ class Account (Bank):
             #how to rase diffrent message for diffrent error???
             print('entered nonono')
 
+    def overdraft_Protection(self,balance, amount):
+        new_balance =float(balance)
+        new_balance -= amount
+        if new_balance < -100:
+            print('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)' )
+            return
+        else:
+            print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
+            # Find better message
+            charge = input('To continue Enter Y or N to stop')
+            charge = charge.upper()
+            if charge == 'Y':
+                print('A 35$ have been deduct from you account, Please Pay Your Fee As Soon As possible ')
+                new_balance -= 35
+                return new_balance
+            if charge == 'N':
+                print('Your Transaction is stoped')
+                return balance
+
+
 
 #ADD THE Overdraft Protection 
-    def withdraw_from_savings(self, price):
+    def withdraw_from_checking(self, price):
             # HANNDEL THIS ERROR*********************
             price = int(price)
             if self.islogin == False:
@@ -150,11 +170,18 @@ class Account (Bank):
             else:
                 # for info in self.customers:
                 current_balance_checking =float(self.customers.get("balance_checking"))
-                if price>= current_balance_checking:
-                    #add fee
-                    pass
+                if price > current_balance_checking:
+                    new_balance_checking = self.overdraft_Protection(self,current_balance_checking , price)
+                    if new_balance_checking < current_balance_checking:
+                        for info in self.customers:
+                            if info == 'balance_checking':
+                                self.customers.update({info:new_balance_checking })
+                        self.update_customer( self.customers)
+                    else:
+
+                        pass
                     # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
-                elif price > 0:
+                elif price > 0 and price <= current_balance_checking :
                     current_balance_checking -= price
                     self.customers.get("balance_checking")
                     for info in self.customers:
@@ -170,7 +197,7 @@ class Account (Bank):
 
 
     #ADD THE Overdraft Protection 
-    def withdraw_from_checking(self, price):
+    def withdraw_from_savings(self, price):
             # HANNDEL THIS ERROR*********************
             price = int(price)
             if self.islogin == False:
