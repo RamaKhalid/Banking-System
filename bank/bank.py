@@ -152,12 +152,15 @@ class Account (Bank):
             print('entered nonono')
 
     def overdraft_Protection(self, balance, amount):
+        # if balance<0:
+
+
         new_balance =float(balance)
         new_balance -= amount
         if new_balance < -100:
             print('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)' )
             return balance
-        else:
+        elif balance>0 and new_balance<0:
             print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
             # Find better message
             charge = input('To continue Enter Y or N to stop')
@@ -169,6 +172,11 @@ class Account (Bank):
             if charge == 'N':
                 print('Your Transaction is stoped')
                 return balance
+        elif balance <0 and new_balance>= -100:
+            return new_balance
+
+
+        
 
 
 #ADD THE Overdraft Protection 
@@ -410,7 +418,7 @@ new_account =Account('bank.csv')
 new_account.login('Rama', 'Khalid', 'Rama123')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
-new_account.withdraw_from_checking(23000)
+new_account.withdraw_from_checking(80)
 # # new_account.withdraw_from_savings(80)
 # # new_account.transfer_from_savings_to_checking(20)
 # # new_account.transfer_from_checking_to_savings(20)
