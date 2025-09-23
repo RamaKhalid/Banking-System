@@ -37,7 +37,7 @@ class Bank:
     def save(self):
         try:
             with open(self.file, 'a',newline="" ) as file:
-                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings', 'overdrafts']
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings', 'overdrafts','activation']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
                 writer.writerows({
                     'account_id':info.account_id, 
@@ -46,7 +46,8 @@ class Bank:
                     'password': info.password,
                     'balance_checking': info.balance_checking,
                     'balance_savings': info.balance_savings,
-                    'overdrafts':0
+                    'overdrafts':0,
+                    'activation': 'activate'
                 } 
                     for info in self.customers)
         except FileNotFoundError:
@@ -59,7 +60,7 @@ class Bank:
     
     def save_update(self,list):
         with open(self.file, 'w',newline="" ) as file:
-            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts']
+            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation']
             writer = csv.DictWriter(file, fieldnames= fieldnames)
             writer.writeheader()
             writer.writerows({
@@ -69,7 +70,8 @@ class Bank:
                 'password': info['password'],
                 'balance_checking': info['balance_checking'],
                 'balance_savings': info['balance_savings'],
-                'overdrafts': info['overdrafts']
+                'overdrafts': info['overdrafts'],
+                'activation': info['activation']
             } 
                 for info in list)
 
@@ -184,6 +186,10 @@ class Account (Bank):
         overdrafts = int(overdrafts)
         if overdrafts== 2:
             print('you over overdrafts U_U Your account will be deactivate ^3^')
+            deactivate = 'deactivate'
+            for info in self.customers:
+                if info == 'activation':
+                    self.customers.update({info:deactivate})
         else:
             overdrafts +=1
             for info in self.customers:
@@ -200,29 +206,33 @@ class Account (Bank):
                 # raise loginError
                 print('please login first')
             else:
-                current_balance_checking =float(self.customers.get("balance_checking"))
-                if price > current_balance_checking:
-                    new_balance_checking = self.overdraft_Protection(current_balance_checking , price)
-                    if new_balance_checking < current_balance_checking:
+                activation= self.customers['activation']
+                if activation == 'activate':
+                    current_balance_checking =float(self.customers.get("balance_checking"))
+                    if price > current_balance_checking:
+                        new_balance_checking = self.overdraft_Protection(current_balance_checking , price)
+                        if new_balance_checking < current_balance_checking:
+                            for info in self.customers:
+                                if info == 'balance_checking':
+                                    self.customers.update({info:new_balance_checking })
+                            self.update_customer( self.customers)
+                        else:
+
+                            pass
+                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    elif price > 0 and price <= current_balance_checking :
+                        current_balance_checking -= price
+                        self.customers.get("balance_checking")
                         for info in self.customers:
                             if info == 'balance_checking':
-                                self.customers.update({info:new_balance_checking })
+                                self.customers.update({info:current_balance_checking })
+                        # print(self.customers)
+                        # self.customers
                         self.update_customer( self.customers)
                     else:
-
-                        pass
-                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
-                elif price > 0 and price <= current_balance_checking :
-                    current_balance_checking -= price
-                    self.customers.get("balance_checking")
-                    for info in self.customers:
-                        if info == 'balance_checking':
-                            self.customers.update({info:current_balance_checking })
-                    # print(self.customers)
-                    # self.customers
-                    self.update_customer( self.customers)
+                        print('number must be >0')
                 else:
-                    print('number must be >0')
+                    print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
 
     #ADD THE Overdraft Protection 
@@ -316,106 +326,130 @@ class Account (Bank):
 
 
     def transfer_from_checking_to_savings(self, amount):
-            amount = int(amount)
-            if amount < 1:
-                pass
-                # raise error
-            else:
-                new_balance_checking =float(self.customers.get("balance_checking"))
-                if amount>= new_balance_checking:
-                    #add error handrling
+        amount = int(amount)
+        if self.islogin == False:
+            # raise loginError
+            print('please login first')
+        else:
+            activation= self.customers['activation']
+            if activation == 'activate':
+                if amount < 1:
                     pass
-                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
-                elif amount > 0:
-                    new_balance_checking -= amount
-                    current_balance_savings =float(self.customers.get("balance_savings"))
-                    current_balance_savings += amount
-                    # self.customers.get("balance_savings")
-                    for info in self.customers:
-                        if info == 'balance_savings':
-                            self.customers.update({info:current_balance_savings })
-                        if info == 'balance_checking':
-                            self.customers.update({info:new_balance_checking })
-                        
-                    # print(self.customers)
-                    # self.customers
-                    self.update_customer( self.customers)
+                    # raise error
                 else:
-                    print('number must be >0')
+                    new_balance_checking =float(self.customers.get("balance_checking"))
+                    if amount>= new_balance_checking:
+                        #add error handrling
+                        pass
+                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    elif amount > 0:
+                        new_balance_checking -= amount
+                        current_balance_savings =float(self.customers.get("balance_savings"))
+                        current_balance_savings += amount
+                        # self.customers.get("balance_savings")
+                        for info in self.customers:
+                            if info == 'balance_savings':
+                                self.customers.update({info:current_balance_savings })
+                            if info == 'balance_checking':
+                                self.customers.update({info:new_balance_checking })
+                            
+                        # print(self.customers)
+                        # self.customers
+                        self.update_customer( self.customers)
+                    else:
+                        print('number must be >0')
+            else:
+                print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
 
     def transfer_checking_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
         amount = int(amount)
-        if amount < 1:
-            pass
-            # raise error
+        if self.islogin == False:
+            # raise loginError
+            print('please login first')
         else:
-            users= self.get_customers()
-            for line in users:
-                if user_account_id in line['account_id']:
-                    user.update(line)
-                    break
-            # print(user)
-            customer_balance_checking =float(self.customers.get("balance_checking"))
-            if amount>= customer_balance_checking:
-                #add error handrling
-                pass
-                # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+            activation= self.customers['activation']
+            if activation == 'activate':
+                if amount < 1:
+                    pass
+                    # raise error
+                else:
+                    users= self.get_customers()
+                    for line in users:
+                        if user_account_id in line['account_id']:
+                            user.update(line)
+                            break
+                    # print(user)
+                    customer_balance_checking =float(self.customers.get("balance_checking"))
+                    if amount>= customer_balance_checking:
+                        #add error handrling
+                        pass
+                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    else:
+                        customer_balance_checking -= amount
+                        user_checking =float(user.get("balance_checking"))
+                        user_checking += amount
+                        for info in self.customers:
+                            if info == 'balance_checking':
+                                self.customers.update({info:customer_balance_checking })
+                                break
+                        self.update_customer( self.customers)
+                        for info in user:
+                            # print(info) 
+                            if info == 'balance_checking':
+                                user.update({info:user_checking })
+                                # print(user)
+                                break
+                        self.update_customer(user)
             else:
-                customer_balance_checking -= amount
-                user_checking =float(user.get("balance_checking"))
-                user_checking += amount
-                for info in self.customers:
-                    if info == 'balance_checking':
-                        self.customers.update({info:customer_balance_checking })
-                        break
-                self.update_customer( self.customers)
-                for info in user:
-                    # print(info) 
-                    if info == 'balance_checking':
-                        user.update({info:user_checking })
-                        # print(user)
-                        break
-                self.update_customer(user)
+                print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
 
     def transfer_savings_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
         amount = int(amount)
-        if amount < 1:
-            pass
-            # raise error
+        if self.islogin == False:
+            # raise loginError
+            print('please login first')
         else:
-            users= self.get_customers()
-            for line in users:
-                if user_account_id in line['account_id']:
-                    user.update(line)
-                    break
-            # print(user)
-            customer_balance_savings =float(self.customers.get("balance_savings"))
-            if amount>= customer_balance_savings:
-                #add error handrling
-                pass
-                # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+            activation= self.customers['activation']
+            if activation == 'activate':
+                if amount < 1:
+                    pass
+                    # raise error
+                else:
+                    users= self.get_customers()
+                    for line in users:
+                        if user_account_id in line['account_id']:
+                            user.update(line)
+                            break
+                    # print(user)
+                    customer_balance_savings =float(self.customers.get("balance_savings"))
+                    if amount>= customer_balance_savings:
+                        #add error handrling
+                        pass
+                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    else:
+                        customer_balance_savings-= amount
+                        user_checking =float(user.get("balance_checking"))
+                        user_checking += amount
+                        for info in self.customers:
+                            if info == 'balance_savings':
+                                self.customers.update({info:customer_balance_savings })
+                                break
+                        self.update_customer( self.customers)
+                        for info in user:
+                            # print(info) 
+                            if info == 'balance_checking':
+                                user.update({info:user_checking })
+                                # print(user)
+                                break
+                        self.update_customer(user)
             else:
-                customer_balance_savings-= amount
-                user_checking =float(user.get("balance_checking"))
-                user_checking += amount
-                for info in self.customers:
-                    if info == 'balance_savings':
-                        self.customers.update({info:customer_balance_savings })
-                        break
-                self.update_customer( self.customers)
-                for info in user:
-                    # print(info) 
-                    if info == 'balance_checking':
-                        user.update({info:user_checking })
-                        # print(user)
-                        break
-                self.update_customer(user)
+                print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
 
 
