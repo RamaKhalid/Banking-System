@@ -92,6 +92,8 @@ while True:
                                 new_account.withdraw_from_savings(amount)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
                             else:
                                 break
                     if withdraw_option == 3:
@@ -139,7 +141,76 @@ while True:
                         break
 
             if option == 3:
-                pass
+                while True:
+                    print('\nChoice Your Account ')
+                    print('1. Transfer Mony From Savings To Checking')
+                    print('2. Transfer Money From Checking To Savings')
+                    print('3. Transfer Money From Checking To Another Account')
+                    print('4. Transfer Money From Saving To Another Account')
+                    print('5. Go BAck to the Services page')
+                    try:
+                        Transfer_option= input("\nPlease Enter The Service Number: ")
+                        Transfer_option= int(Transfer_option)
+                        if Transfer_option <1 or Transfer_option >5:
+                            raise ValueError
+                    except ValueError :
+                        print("Please Enter a vaild input from 1 to 5")
+                    if Transfer_option == 1:
+                        while True:    
+                            try:
+                                print('\n**** Transfer Mony From Savings To Checking ****')
+                                amount = input('Pleas Enter the Amount You Like To Transfer: ')
+                                amount =int(amount)
+                                new_account.transfer_from_savings_to_checking(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
+                            else:
+                                break
+                        
+                    if Transfer_option == 2:
+                        while True:    
+                            try:
+                                print('\n**** Transfer Money From Checking To Savings ****')
+                                amount = input('Pleas Enter the Amount You Like To Transfer: ')
+                                amount =int(amount)
+                                new_account.transfer_from_checking_to_savings(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
+                            else:
+                                break
+
+                    if Transfer_option == 3:
+                        while True:    
+                            try:
+                                print('\n**** Transfer Money From Checking To Another Account ****')
+                                amount = input('Pleas Enter the Amount You Like To Transfer: ')
+                                amount =int(amount)
+                                new_account.transfer_checking_to_another_account(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
+                            else:
+                                break
+                    if Transfer_option == 4:
+                        while True:    
+                            try:
+                                print('\n**** Transfer Money From Savings To Another Account ****')
+                                amount = input('Pleas Enter the Amount You Like To Transfer: ')
+                                amount =int(amount)
+                                new_account.transfer_savings_to_another_account(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
+                            else:
+                                break
+                    if Transfer_option == 5:
+                        break
                 
             if option == 4:
                 print(bank.customer_info())

@@ -1,4 +1,6 @@
 import csv
+from exceptions import*
+
 
 
 class Customer:
@@ -239,9 +241,8 @@ class Account (Bank):
                 # for info in self.customers:
                 current_balance_savings =float(self.customers.get("balance_savings"))
                 if price>= current_balance_savings:
-                    #add error handrling
-                    pass
-                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {current_balance_savings}$')
+                    raise Declined
                 elif price > 0:
                     current_balance_savings -= price
                     self.customers.get("balance_savings")
@@ -315,11 +316,10 @@ class Account (Bank):
             else:
                 current_balance_savings =float(self.customers.get("balance_savings"))
                 if amount>= current_balance_savings:
-                    #add error handrling
-                    pass
-                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                    print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {current_balance_savings}$')
+                    raise Declined
                 elif amount > 0:
-                    current_balance_savings -= amount
+                    current_balance_savings -= amount   
                     new_balance_checking =float(self.customers.get("balance_checking"))
                     new_balance_checking += amount
                     # self.customers.get("balance_savings")
@@ -332,6 +332,8 @@ class Account (Bank):
                     # print(self.customers)
                     # self.customers
                     self.update_customer( self.customers)
+                    print(f'A {amount} have been Transfered from your Savings account to checking account successfully and your current Savings balnce is {current_balance_savings}$')                        
+
                 else:
                     print('number must be >0')
 
@@ -356,6 +358,8 @@ class Account (Bank):
                                 if info == 'balance_checking':
                                     self.customers.update({info:new_balance_checking })
                             self.update_customer( self.customers)
+                            print(f'A {amount} have been Transfered from your checking account to your Savings account successfully and your current checking balnce is {current_balance_checking}$')                        
+
                         else:
                             pass
                     elif amount > 0:
@@ -372,6 +376,8 @@ class Account (Bank):
                         # print(self.customers)
                         # self.customers
                         self.update_customer( self.customers)
+                        print(f'A {amount} have been Transfered from your checking account to your Savings account successfully and your current checking balnce is {current_balance_checking}$')                        
+
                     else:
                         print('number must be >0')
             else:
@@ -406,6 +412,8 @@ class Account (Bank):
                                 if info == 'balance_checking':
                                     self.customers.update({info:new_balance_checking })
                             self.update_customer( self.customers)
+                            print(f'A {amount} have been Transfered from your checking account to your {user_account_id} account successfully and your current checking balnce is {new_balance_checking}$')                        
+
                         else:
                             pass
                     else:
@@ -417,6 +425,7 @@ class Account (Bank):
                                 self.customers.update({info:customer_balance_checking })
                                 break
                         self.update_customer( self.customers)
+
                         for info in user:
                             # print(info) 
                             if info == 'balance_checking':
@@ -424,6 +433,8 @@ class Account (Bank):
                                 # print(user)
                                 break
                         self.update_customer(user)
+                        print(f'A {amount} have been Transfered from your checking account to your {user_account_id} account successfully and your current checking balnce is {customer_balance_checking}$')                        
+
             else:
                 print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
@@ -450,8 +461,8 @@ class Account (Bank):
                     # print(user)
                     customer_balance_savings =float(self.customers.get("balance_savings"))
                     if amount>= customer_balance_savings:
-                        #add error handrling
-                        pass
+                        print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {current_balance_savings}$')
+                        raise Declined
                     else:
                         customer_balance_savings-= amount
                         user_checking =float(user.get("balance_checking"))
@@ -468,6 +479,8 @@ class Account (Bank):
                                 # print(user)
                                 break
                         self.update_customer(user)
+                        print(f'A {amount} have been Transfered from your Savings account to your {user_account_id} account successfully and your current checking balnce is {customer_balance_savings}$')                        
+
             else:
                 print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
