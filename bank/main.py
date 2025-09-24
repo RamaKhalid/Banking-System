@@ -81,8 +81,17 @@ while True:
                                 new_account.withdraw_from_checking(amount)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
+                            except Declined:
+                                pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
+
                     if withdraw_option == 2:
                         while True:    
                             try:
@@ -94,6 +103,12 @@ while True:
                                 print("Please Enter a vaild amount of money")
                             except Declined:
                                 pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
                     if withdraw_option == 3:
@@ -122,6 +137,9 @@ while True:
                                 new_account.deposit_into_checking(amount)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
                             else:
                                 break
 
@@ -134,6 +152,9 @@ while True:
                                 new_account.deposit_into_savings(amount)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
                             else:
                                 break
 
@@ -166,6 +187,9 @@ while True:
                                 print("Please Enter a vaild amount of money")
                             except Declined:
                                 pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
                             else:
                                 break
                         
@@ -180,6 +204,12 @@ while True:
                                 print("Please Enter a vaild amount of money")
                             except Declined:
                                 pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
 
@@ -189,11 +219,18 @@ while True:
                                 print('\n**** Transfer Money From Checking To Another Account ****')
                                 amount = input('Pleas Enter the Amount You Like To Transfer: ')
                                 amount =int(amount)
-                                new_account.transfer_checking_to_another_account(amount)
+                                other_id =input('Please Enter The ID For The Account You Want Transfer To: ')
+                                new_account.transfer_checking_to_another_account(amount, other_id)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
                             except Declined:
                                 pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
                     if Transfer_option == 4:
@@ -207,6 +244,9 @@ while True:
                                 print("Please Enter a vaild amount of money")
                             except Declined:
                                 pass
+                            except UseeIsNOTlogin:
+                                print('Sorry You Neet To Login First')
+                                break
                             else:
                                 break
                     if Transfer_option == 5:
@@ -217,79 +257,62 @@ while True:
             if option == 5:
                 break
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if choice == 2:
-                try:
-                    while True:
-                        try:
-                            first_name=input('Enter Your First Name: ')
-                            if first_name ==' ' or (not first_name.isalpha()):
-                                raise MissingValue('\nPlease Enter a Real Name\n')
-                            else:
-                                break
-                        except MissingValue as e:
-                            print(e)
-
-                    while True:
-                        try:
-                            last_name=input('Enter Your last Name: ')
-                            if last_name == ' ' or (not last_name.isalpha()):
-                                raise MissingValue('\nPlease Enter a Real Name\n')
-                            else:
-                                break
-                        except MissingValue as e:
-                            print(e)
-                    while True:
-                        try:
-                            password=input('Enter Your password: ')
-                            if password == "" :
-                                raise MissingValue('\nPlease Enter A Proper Password\n')
-                            else:
-                                break
-                        except MissingValue as e:
-                            print(e)
-                    while True:
-                        try:
-                            balance_checking=input('Enter Your balance checking: ')
-                            if balance_checking == "" or (not balance_checking.isdigit()) :
-                                raise MissingValue('\nPlease enter a proper checking\n')
-                            else:
-                                break
-                        except MissingValue as e:
-                            print(e)
-                    while True:
-                        try:
-                            balance_savings=input('Enter Your balance savings: ')
-                            if balance_savings == "":
-                                balance_savings = 0.0
-                                break
-                            elif not balance_savings.isdigit():
-                                raise MissingValue('\nPlease enter a proper Savings that contain only numbers\n')                           
-                            else:
-                                break
-                        except MissingValue as e:
-                            print(e)
-                    bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings))
-                    print('')
-                    print(bank.customer_info())
-
-                except MissingValue as e:
-                    print(e)
-
-        
+    if choice == 2:
+            try:
+                while True:
+                    try:
+                        first_name=input('Enter Your First Name: ')
+                        if first_name ==' ' or (not first_name.isalpha()):
+                            raise MissingValue('\nPlease Enter a Real Name\n')
+                        else:
+                            break
+                    except MissingValue as e:
+                        print(e)
+                while True:
+                    try:
+                        last_name=input('Enter Your last Name: ')
+                        if last_name == ' ' or (not last_name.isalpha()):
+                            raise MissingValue('\nPlease Enter a Real Name\n')
+                        else:
+                            break
+                    except MissingValue as e:
+                        print(e)
+                while True:
+                    try:
+                        password=input('Enter Your password: ')
+                        if password == "" :
+                            raise MissingValue('\nPlease Enter A Proper Password\n')
+                        else:
+                            break
+                    except MissingValue as e:
+                        print(e)
+                while True:
+                    try:
+                        balance_checking=input('Enter Your balance checking: ')
+                        if balance_checking == "" or (not balance_checking.isdigit()) :
+                            raise MissingValue('\nPlease enter a proper checking\n')
+                        else:
+                            break
+                    except MissingValue as e:
+                        print(e)
+                while True:
+                    try:
+                        balance_savings=input('Enter Your balance savings: ')
+                        if balance_savings == "":
+                            balance_savings = 0.0
+                            break
+                        elif not balance_savings.isdigit():
+                            raise MissingValue('\nPlease enter a proper Savings that contain only numbers\n')                           
+                        else:
+                            break
+                    except MissingValue as e:
+                        print(e)
+                bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings))
+                print('')
+                print(bank.customer_info())
+            except MissingValue as e:
+                print(e)
+    
     # except ValueError:
     #     print("Please Enter a vaild input")
     # except MissingValue as e:

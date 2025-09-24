@@ -2,5 +2,10 @@ class MissingValue(Exception):
     pass
 
 class Declined(Exception):
-    pass    
+    pass   
 
+class UseeIsNOTlogin(Exception):
+    pass
+
+class Deactivate(Exception):
+    pass

@@ -31,10 +31,6 @@ class Customer:
         self.overdrafts = 0
         self.activation= 'activate'
 
-    def info(self):
-        return(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
-
-    
 class Bank():
     def __init__(self, file):
         self.file = file
@@ -71,12 +67,9 @@ class Bank():
                     for info in self.customers)
         except FileNotFoundError:
             print(f'Sorry {file} file not found:(')
-        # except TypeError:
-        #     pass
-        # except IndentationError:
-        #     pass
+        
 
-    
+
     def save_update(self,list):
         with open(self.file, 'w',newline="" ) as file:
             fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation']
@@ -94,38 +87,30 @@ class Bank():
             } 
                 for info in list)
 
+
     def add_customer(self,customer):
         self.customers.append(customer)
         self.save() 
+
 
     def customer_info(self ):
         for i in self.customers:
             return (f'Account_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts {i.overdrafts} \nActivation {i.activation}')
 
-        
 
     def update_customer(self, data):
-            # try:
                 users= []
                 try:
                     with open(self.file, "r") as file:
                         reader = csv.DictReader(file)
                         for row in reader:
                             users.append(row)
-                    # for info in self.customers:
-                    #     return info
                 except FileNotFoundError:
                     print('file not found:(')
-                # print(users)
                 for line in users:
                     if line['account_id'] == data['account_id']:
-                        # print(line)
                         line.update(data)
-                        # print(line)
-                # print(users)
                 self.save_update(users)
-
-
 
 
 class Account (Bank):
@@ -169,39 +154,71 @@ class Account (Bank):
                 self.overdrafts_count()
                 # print(f' this is overdrafts: {self.customers['overdrafts']}')
                 return new_balance
-            if charge == 'N':
+            elif charge == 'N':
                 print('Your Transaction is stoped')
                 return balance
+            else:
+                raise ValueError('Please Enter Y or N')
         elif balance <0 and new_balance>= -100:
-            self.overdrafts_count()
-            return new_balance
+            if (self.overdrafts_count()):
+                print('Your Transaction is stoped')
+                return balance
+            else:
+                return new_balance
 
 
     def overdrafts_count(self):
         overdrafts = self.customers['overdrafts']
         overdrafts = int(overdrafts)
+        # Handiling deactivate
         if overdrafts== 2:
             print('you over overdrafts U_U Your account will be deactivate ^3^')
             deactivate = 'deactivate'
             for info in self.customers:
                 if info == 'activation':
                     self.customers.update({info:deactivate})
+            raise Deactivate
+        elif overdrafts== 1:
+            print(f'Dear {self.customers['first_name']} This will be Your second overdrafts and Continuing with this Transaction will Deactivate Your Account')
+            sure= input('Are You Sure You Want To Continue With This Transaction? Y to Continue N to Stop: ')
+            sure =sure.upper()
+            if sure == 'Y':
+                overdrafts +=1
+                for info in self.customers:
+                    if info == 'overdrafts':
+                        self.customers.update({info:overdrafts})
+            elif sure == 'N':
+                return True
+            else:
+                raise ValueError('Please Enter Y or N')
         else:
             overdrafts +=1
             for info in self.customers:
                 if info == 'overdrafts':
                     self.customers.update({info:overdrafts})
+    
+
+    def reactivate(self, user):
+        # Handeling reactivate account
+        activation= user['activation']
+        balance = user['balance_checking']
+        overdrafts = 0
+        if activation == 'deactivate' and balance >= 0:
+            for info in user:
+                if info == 'activation':
+                    user.update({info:'activate'})
+                if info == 'overdrafts':
+                    user.update({info:0})
+            self.update_customer(user)
+            print('Thank you for settling The outstanding dues. The account has been reactivated and is now fully operational')
 
 
-
-#ADD THE Overdraft Protection 
     def withdraw_from_checking(self, price):
             done = False
-            # HANNDEL THIS ERROR*********************
+            
             price = int(price)
             if self.islogin == False:
-                # raise loginError
-                print('please login first')
+                raise UseeIsNOTlogin
             else:
                 activation= self.customers['activation']
                 if activation == 'activate':
@@ -213,6 +230,8 @@ class Account (Bank):
                                 if info == 'balance_checking':
                                     self.customers.update({info:new_balance_checking })
                             self.update_customer( self.customers)
+                            print(f'A {price} have been withdraw from your checking account successfully and your current checking balnce is {new_balance_checking}$')                        
+
                         else:
                             pass
 
@@ -225,18 +244,15 @@ class Account (Bank):
                         self.update_customer( self.customers)
                         print(f'A {price} have been withdraw from your checking account successfully and your current checking balnce is {current_balance_checking}$')                        
                     else:
-                        print('number must be >0')
+                        raise ValueError
                 else:
-                    print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
-
+                    raise Deactivate
 
     #ADD THE Overdraft Protection 
     def withdraw_from_savings(self, price):
-            # HANNDEL THIS ERROR*********************
             price = int(price)
             if self.islogin == False:
-                # raise loginError
-                print('please login first')
+                raise UseeIsNOTlogin
             else:
                 # for info in self.customers:
                 current_balance_savings =float(self.customers.get("balance_savings"))
@@ -255,18 +271,16 @@ class Account (Bank):
                     print(f'A {price} have been withdraw from your checking account successfully and your current Savings balnce is {current_balance_savings}$')                        
 
                 else:
-                    print('number must be >0')
+                    raise ValueError
 
 
     def deposit_into_savings(self, amount):
         amount = int(amount)
         if self.islogin == False:
-                # raise loginError
-                print('please login first')
+                raise UseeIsNOTlogin
         else:
             if amount < 1:
-                pass
-                # raise error
+                raise ValueError
             else:
                 new_balance_savings =int(self.customers.get("balance_savings"))
                 new_balance_savings += amount
@@ -284,13 +298,12 @@ class Account (Bank):
     def deposit_into_checking(self, amount):
         amount = int(amount)
         if self.islogin == False:
-                # raise loginError
-                print('please login first')
+            raise UseeIsNOTlogin
         else:
             if amount < 1:
-                pass
-                # raise error
+                raise ValueError
             else:
+                
                 new_balance_checking =float(self.customers.get("balance_checking"))
                 new_balance_checking += amount
                 self.customers.get("balance_checking")
@@ -300,19 +313,18 @@ class Account (Bank):
                 # print(self.customers)
                 # self.customers
                 self.update_customer( self.customers)
-                print(f'A {amount} have been withdraw from your checking account successfully and your current Savings balnce is {new_balance_checking}$')                        
+                print(f'A {amount} have been Deposit from your checking account successfully and your current Savings balnce is {new_balance_checking}$')  
+                self.reactivate(self.customers)
 
 
         
     def transfer_from_savings_to_checking(self, amount):
         amount = int(amount)
         if self.islogin == False:
-                # raise loginError
-                print('please login first')
+            raise UseeIsNOTlogin
         else:
             if amount < 1:
-                pass
-                # raise error
+                raise ValueError
             else:
                 current_balance_savings =float(self.customers.get("balance_savings"))
                 if amount>= current_balance_savings:
@@ -333,22 +345,21 @@ class Account (Bank):
                     # self.customers
                     self.update_customer( self.customers)
                     print(f'A {amount} have been Transfered from your Savings account to checking account successfully and your current Savings balnce is {current_balance_savings}$')                        
-
+                    self.reactivate(self.customers)
                 else:
-                    print('number must be >0')
+                    raise ValueError
+                
 
 
     def transfer_from_checking_to_savings(self, amount):
         amount = int(amount)
         if self.islogin == False:
-            # raise loginError
-            print('please login first')
+            raise UseeIsNOTlogin
         else:
             activation= self.customers['activation']
             if activation == 'activate':
                 if amount < 1:
-                    pass
-                    # raise error
+                    raise ValueError
                 else:
                     current_balance_checking =float(self.customers.get("balance_checking"))
                     if amount>= current_balance_checking:
@@ -379,18 +390,16 @@ class Account (Bank):
                         print(f'A {amount} have been Transfered from your checking account to your Savings account successfully and your current checking balnce is {current_balance_checking}$')                        
 
                     else:
-                        print('number must be >0')
+                        raise ValueError
             else:
-                print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
-
+                raise Deactivate
 
     def transfer_checking_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
         amount = int(amount)
         if self.islogin == False:
-            # raise loginError
-            print('please login first')
+            raise UseeIsNOTlogin
         else:
             activation= self.customers['activation']
             if activation == 'activate':
@@ -425,6 +434,7 @@ class Account (Bank):
                                 self.customers.update({info:customer_balance_checking })
                                 break
                         self.update_customer( self.customers)
+                        
 
                         for info in user:
                             # print(info) 
@@ -433,10 +443,10 @@ class Account (Bank):
                                 # print(user)
                                 break
                         self.update_customer(user)
-                        print(f'A {amount} have been Transfered from your checking account to your {user_account_id} account successfully and your current checking balnce is {customer_balance_checking}$')                        
-
+                        print(f'A {amount} have been Transfered from your checking account to {user['first_name']}\' account successfully and your current checking balnce is {customer_balance_checking}$')                        
+                        self.reactivate(user)
             else:
-                print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
+                raise Deactivate
 
 
     def transfer_savings_to_another_account(self, amount, user_account_id):
@@ -444,8 +454,7 @@ class Account (Bank):
         user={}
         amount = int(amount)
         if self.islogin == False:
-            # raise loginError
-            print('please login first')
+            raise UseeIsNOTlogin
         else:
             activation= self.customers['activation']
             if activation == 'activate':
@@ -480,7 +489,7 @@ class Account (Bank):
                                 break
                         self.update_customer(user)
                         print(f'A {amount} have been Transfered from your Savings account to your {user_account_id} account successfully and your current checking balnce is {customer_balance_savings}$')                        
-
+                        self.reactivate(user)
             else:
                 print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
