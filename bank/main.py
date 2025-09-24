@@ -145,6 +145,7 @@ while True:
                             balance_savings=input('Enter Your balance savings: ')
                             if balance_savings == "":
                                 balance_savings = 0.0
+                                break
                             elif not balance_savings.isdigit():
                                 raise MissingValue('\nPlease enter a proper Savings that contain only numbers\n')                           
                             else:
@@ -152,6 +153,7 @@ while True:
                         except MissingValue as e:
                             print(e)
                     bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings))
+                    bank.customer_info(first_name)
                 except MissingValue as e:
                     print(e)
 

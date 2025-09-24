@@ -11,12 +11,12 @@ class Customer:
         self.balance_checking =balance_checking
         self.balance_savings =balance_savings
         Customer.account_id += 1
-
+    
     def info(self):
         return(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
 
     
-class Bank:
+class Bank():
     def __init__(self, file):
         self.file = file
         self.customers = []
@@ -439,7 +439,6 @@ class Account (Bank):
                     if amount>= customer_balance_savings:
                         #add error handrling
                         pass
-                        # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
                     else:
                         customer_balance_savings-= amount
                         user_checking =float(user.get("balance_checking"))
@@ -477,9 +476,9 @@ new_account.login('Rama', 'Khalid', 'Rama123')
 # # new_account.withdraw_from_savings(80)
 # # new_account.transfer_from_savings_to_checking(20)
 # # new_account.transfer_from_checking_to_savings(20)
-new_account.transfer_savings_to_another_account(2000, '10005' )
+# new_account.transfer_savings_to_another_account(2000, '10005' )
 # bank.update_customer()
 # print(new_account.customers)
 
 # print(bank.get_customers())
-# bank.customer_info('Rama')
+bank.customer_info('Rama')
