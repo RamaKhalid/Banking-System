@@ -251,71 +251,89 @@ class Account (Bank):
                     # print(self.customers)
                     # self.customers
                     self.update_customer( self.customers)
+                    print(f'A {price} have been withdraw from your checking account successfully and your current Savings balnce is {current_balance_savings}$')                        
+
                 else:
                     print('number must be >0')
 
 
     def deposit_into_savings(self, amount):
         amount = int(amount)
-        if amount < 1:
-            pass
-            # raise error
+        if self.islogin == False:
+                # raise loginError
+                print('please login first')
         else:
-            new_balance_savings =int(self.customers.get("balance_savings"))
-            new_balance_savings += amount
-            self.customers.get("balance_savings")
-            for info in self.customers:
-                if info == 'balance_savings':
-                    self.customers.update({info:new_balance_savings })
-            # print(self.customers)
-            # self.customers
-            self.update_customer( self.customers)
+            if amount < 1:
+                pass
+                # raise error
+            else:
+                new_balance_savings =int(self.customers.get("balance_savings"))
+                new_balance_savings += amount
+                self.customers.get("balance_savings")
+                for info in self.customers:
+                    if info == 'balance_savings':
+                        self.customers.update({info:new_balance_savings })
+                # print(self.customers)
+                # self.customers
+                self.update_customer( self.customers)
+                print(f'A {amount} have been withdraw from your checking account successfully and your current Savings balnce is {new_balance_savings}$')                        
+
 
 
     def deposit_into_checking(self, amount):
         amount = int(amount)
-        if amount < 1:
-            pass
-            # raise error
+        if self.islogin == False:
+                # raise loginError
+                print('please login first')
         else:
-            new_balance_checking =int(self.customers.get("balance_checking"))
-            new_balance_checking += amount
-            self.customers.get("balance_checking")
-            for info in self.customers:
-                if info == 'balance_checking':
-                    self.customers.update({info:new_balance_checking })
-            # print(self.customers)
-            # self.customers
-            self.update_customer( self.customers)
+            if amount < 1:
+                pass
+                # raise error
+            else:
+                new_balance_checking =float(self.customers.get("balance_checking"))
+                new_balance_checking += amount
+                self.customers.get("balance_checking")
+                for info in self.customers:
+                    if info == 'balance_checking':
+                        self.customers.update({info:new_balance_checking })
+                # print(self.customers)
+                # self.customers
+                self.update_customer( self.customers)
+                print(f'A {amount} have been withdraw from your checking account successfully and your current Savings balnce is {new_balance_checking}$')                        
+
 
         
     def transfer_from_savings_to_checking(self, amount):
         amount = int(amount)
-        if amount < 1:
-            pass
-            # raise error
+        if self.islogin == False:
+                # raise loginError
+                print('please login first')
         else:
-            current_balance_savings =float(self.customers.get("balance_savings"))
-            if amount>= current_balance_savings:
-                #add error handrling
+            if amount < 1:
                 pass
-                # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
-            elif amount > 0:
-                current_balance_savings -= amount
-                new_balance_checking =float(self.customers.get("balance_checking"))
-                new_balance_checking += amount
-                # self.customers.get("balance_savings")
-                for info in self.customers:
-                    if info == 'balance_savings':
-                        self.customers.update({info:current_balance_savings })
-                    if info == 'balance_checking':
-                        self.customers.update({info:new_balance_checking })
-                    
-                # print(self.customers)
-                # self.customers
-                self.update_customer( self.customers)
+                # raise error
             else:
-                print('number must be >0')
+                current_balance_savings =float(self.customers.get("balance_savings"))
+                if amount>= current_balance_savings:
+                    #add error handrling
+                    pass
+                    # print('You have overdraft so a overdraft protection fee of 35 SAR will be apply')
+                elif amount > 0:
+                    current_balance_savings -= amount
+                    new_balance_checking =float(self.customers.get("balance_checking"))
+                    new_balance_checking += amount
+                    # self.customers.get("balance_savings")
+                    for info in self.customers:
+                        if info == 'balance_savings':
+                            self.customers.update({info:current_balance_savings })
+                        if info == 'balance_checking':
+                            self.customers.update({info:new_balance_checking })
+                        
+                    # print(self.customers)
+                    # self.customers
+                    self.update_customer( self.customers)
+                else:
+                    print('number must be >0')
 
 
     def transfer_from_checking_to_savings(self, amount):

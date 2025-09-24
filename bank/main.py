@@ -84,21 +84,67 @@ while True:
                             else:
                                 break
                     if withdraw_option == 2:
-                        pass
+                        while True:    
+                            try:
+                                print('\n**** withdraw Money from Savings ****')
+                                amount = input('Pleas Enter the Amount You Like To Withdraw: ')
+                                amount =int(amount)
+                                new_account.withdraw_from_savings(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            else:
+                                break
                     if withdraw_option == 3:
                         break
 
-                if option == 2:
-                    pass
+            if option == 2:
+                while True:
+                    print('\nChoice Your Account ')
+                    print('1. Deposit Money To checking')
+                    print('2. Deposit Money To savings')
+                    print('3. Go BAck to the Services page')
+                    try:
+                        Deposit_option= input("\nPlease Enter The Service Number: ")
+                        Deposit_option= int(Deposit_option)
+                        if Deposit_option <1 or Deposit_option >3:
+                            raise ValueError
+                    except ValueError :
+                        print("Please Enter a vaild input from 1 to 3")
+                    
+                    if Deposit_option == 1:
+                        while True:    
+                            try:
+                                print('\n**** Deposit Money To checking ****')
+                                amount = input('Pleas Enter the Amount You Like To Deposit: ')
+                                amount =int(amount)
+                                new_account.deposit_into_checking(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            else:
+                                break
 
-                if option == 3:
-                    pass
+                    if Deposit_option == 2:
+                        while True:    
+                            try:
+                                print('\n**** Deposit Money To Savings ****')
+                                amount = input('Pleas Enter the Amount You Like To Deposit: ')
+                                amount =int(amount)
+                                new_account.deposit_into_savings(amount)
+                            except ValueError :
+                                print("Please Enter a vaild amount of money")
+                            else:
+                                break
 
-                if option == 4:
-                    pass
+                    if Deposit_option == 3:
+                        break
 
-                if option == 5:
-                    pass
+            if option == 3:
+                pass
+                
+            if option == 4:
+                print(bank.customer_info())
+            if option == 5:
+                break
 
 
 
