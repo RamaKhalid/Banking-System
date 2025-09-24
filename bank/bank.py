@@ -2,16 +2,33 @@ import csv
 
 
 class Customer:
+
+    ids =[]
+    id= ''
+    try:
+        with open('bank.csv', "r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                ids.append(row['account_id'])
+                id = int(ids[-1])+1
+            
+    except FileNotFoundError:
+        print(f'Sorry {file} file not found:(')
+
+    
     account_id =10006
+    
     def __init__(self,first_name, last_name, password, balance_checking, balance_savings):
-        self.account_id = Customer.account_id
+        self.account_id = Customer.id
         self.first_name =first_name
         self.last_name =last_name
         self.password =password
         self.balance_checking =balance_checking
         self.balance_savings =balance_savings
         Customer.account_id += 1
-    
+        self.overdrafts = 0
+        self.activation= 'activate'
+
     def info(self):
         return(f'First Name: {self.first_name} \nLast Name: {self.last_name} \nPassword: {self.password} \nBalance Checking: {self.balance_checking} \nBalance_Savings: {self.balance_savings}')
 
@@ -79,10 +96,11 @@ class Bank():
         self.customers.append(customer)
         self.save() 
 
-    def customer_info(self, str):
+    def customer_info(self ):
         for i in self.customers:
-            if str in i.first_name:
-                i.info()
+            return (f'Account_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts {i.overdrafts} \nActivation {i.activation}')
+
+        
 
     def update_customer(self, data):
             # try:
@@ -115,45 +133,22 @@ class Account (Bank):
         
     
 
-    def login(self,first_name, last_name, password ):
-        firsts=[]
-        lasts=[]
-        passwords=[]
-        print('hello from here')
-        try:
-            self.customers= self.get_customers()
-            #ASK CONOR ABOUT THIS!!!!!!!!!!!!!!!!!!!!!!!
-            for info in self.customers:
-                firsts.append(info['first_name'])
-                lasts.append(info['last_name'])
-                passwords.append(info['password'])
-                if first_name in info['first_name']:
-                    if last_name in info['last_name']:
-                        if password in info['password']:
-                            self.customers =info
+    def login(self,userID, password ):
+        idFound= False
+        self.allUsers= self.get_customers()
+        for info in self.allUsers:
+            if userID in info['account_id']:
+                idFound =True
+                if password in info['password']:
+                    self.islogin = True
+                    self.customers =info
+                    print(f'Welcome {info['first_name']}👋, you have been loged in successfully🎉 ')
+                # else:
+                #     print('User Not found please check your Password')
+        if idFound == False or self.islogin==False :
+            print('User Not found please check your ID or password')
 
-            if first_name in firsts:
-                if last_name in lasts:
-                    if password in passwords:
-                        self.islogin = True
-                        # self.customers =info
-                        # print(self.customers)
-                        print(f'Welcome {first_name}👋, you have been loged in successfully🎉 ')
-                    else:
-                        print('pass no')
-                        # raise ValueError
-                        return
-                else:
-                    print('entered last no')
-                    # raise ValueError
-                    return
-            else:
-                print('entered first no')
-                return
-                # raise ValueError
-        except ValueError:
-            #how to rase diffrent message for diffrent error???
-            print('entered nonono')
+        
 
     def overdraft_Protection(self, balance, amount):
         new_balance =float(balance)
@@ -469,7 +464,7 @@ bank = Bank('bank.csv')
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 new_account =Account('bank.csv')
-new_account.login('Rama', 'Khalid', 'Rama123')
+# new_account.login( '10003', 'fffff')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
 # new_account.withdraw_from_checking(20)
@@ -479,6 +474,6 @@ new_account.login('Rama', 'Khalid', 'Rama123')
 # new_account.transfer_savings_to_another_account(2000, '10005' )
 # bank.update_customer()
 # print(new_account.customers)
-
+# print(Customer.id)
 # print(bank.get_customers())
-bank.customer_info('Rama')
+# print(bank.customer_info())
