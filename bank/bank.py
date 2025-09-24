@@ -194,6 +194,7 @@ class Account (Bank):
 
 #ADD THE Overdraft Protection 
     def withdraw_from_checking(self, price):
+            done = False
             # HANNDEL THIS ERROR*********************
             price = int(price)
             if self.islogin == False:
@@ -219,9 +220,8 @@ class Account (Bank):
                         for info in self.customers:
                             if info == 'balance_checking':
                                 self.customers.update({info:current_balance_checking })
-                        # print(self.customers)
-                        # self.customers
                         self.update_customer( self.customers)
+                        print(f'A {price} have been withdraw from your checking account successfully and your current checking balnce is {current_balance_checking}$')                        
                     else:
                         print('number must be >0')
                 else:
@@ -332,7 +332,7 @@ class Account (Bank):
                 else:
                     current_balance_checking =float(self.customers.get("balance_checking"))
                     if amount>= current_balance_checking:
-                        new_balance_checking = self.overdraft_Protection(current_balance_checking , price)
+                        new_balance_checking = self.overdraft_Protection(current_balance_checking , amount)
                         if new_balance_checking < current_balance_checking:
                             for info in self.customers:
                                 if info == 'balance_checking':
