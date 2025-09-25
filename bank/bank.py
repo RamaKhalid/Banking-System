@@ -1,7 +1,5 @@
 import csv
-from exceptions import*
-
-
+from bank.exceptions import*
 
 class Customer:
 
@@ -31,11 +29,17 @@ class Customer:
         self.overdrafts = 0
         self.activation= 'activate'
 
+
+
 class Bank():
     def __init__(self, file):
         self.file = file
         self.customers = []
         self.allUsers= []
+
+    def get_id(self):
+        for i in self.customers:
+            return i.account_id
 
     def get_customers(self):
         try:
@@ -45,7 +49,7 @@ class Bank():
                     self.allUsers.append(row)
                 return self.allUsers
         except FileNotFoundError:
-            print(f'Sorry {file} file not found:(')
+            print(f'Sorry {self.file} file not found:(')
 
 
 #Source: https://www.youtube.com/watch?v=Kk2TkaQ2Y3Q&t=28s
@@ -66,26 +70,29 @@ class Bank():
                 } 
                     for info in self.customers)
         except FileNotFoundError:
-            print(f'Sorry {file} file not found:(')
+            print(f'Sorry {self.file} file not found:(')
         
 
 
     def save_update(self,list):
-        with open(self.file, 'w',newline="" ) as file:
-            fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation']
-            writer = csv.DictWriter(file, fieldnames= fieldnames)
-            writer.writeheader()
-            writer.writerows({
-                'account_id':info['account_id'], 
-                'first_name': info['first_name'] ,
-                'last_name': info['last_name'],
-                'password': info['password'],
-                'balance_checking': info['balance_checking'],
-                'balance_savings': info['balance_savings'],
-                'overdrafts': info['overdrafts'],
-                'activation': info['activation']
-            } 
-                for info in list)
+        try:
+            with open(self.file, 'w',newline="" ) as file:
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation']
+                writer = csv.DictWriter(file, fieldnames= fieldnames)
+                writer.writeheader()
+                writer.writerows({
+                    'account_id':info['account_id'], 
+                    'first_name': info['first_name'] ,
+                    'last_name': info['last_name'],
+                    'password': info['password'],
+                    'balance_checking': info['balance_checking'],
+                    'balance_savings': info['balance_savings'],
+                    'overdrafts': info['overdrafts'],
+                    'activation': info['activation']
+                } 
+                    for info in list)
+        except FileNotFoundError:
+            print(f'Sorry {file} file not found:(')
 
 
     def add_customer(self,customer):
@@ -95,7 +102,7 @@ class Bank():
 
     def customer_info(self ):
         for i in self.customers:
-            return (f'Account_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts {i.overdrafts} \nActivation {i.activation}')
+            return (f'Account_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts: {i.overdrafts} \nActivation: {i.activation}')
 
 
     def update_customer(self, data):
@@ -111,6 +118,10 @@ class Bank():
                     if line['account_id'] == data['account_id']:
                         line.update(data)
                 self.save_update(users)
+
+    def __repr__(self):
+        for info in self.customers:
+            print (info)
 
 
 class Account (Bank):
@@ -470,7 +481,7 @@ class Account (Bank):
                     # print(user)
                     customer_balance_savings =float(self.customers.get("balance_savings"))
                     if amount>= customer_balance_savings:
-                        print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {current_balance_savings}$')
+                        print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {customer_balance_savings}$')
                         raise Declined
                     else:
                         customer_balance_savings-= amount
@@ -501,9 +512,10 @@ bank = Bank('bank.csv')
 # 
 
 # bank.add_customer(Customer('sara', 'aaaa',"jjj" , 20000, 5000))
+# print(bank.get_id())
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
-new_account =Account('bank.csv')
+# new_account =Account('bank.csv')
 # new_account.login( '10003', 'fffff')
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)

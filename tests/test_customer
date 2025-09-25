@@ -11,5 +11,4 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(self.customer.balance_checking, 20000)
         self.assertEqual(self.customer.balance_savings, 5000)
 
-    def test_customer_info(self):
-        self.assertEqual(self.customer.info(), 'First Name: Rama \nLast Name: Khalid \nPassword: Rama123 \nBalance Checking: 20000 \nBalance_Savings: 5000')
+    

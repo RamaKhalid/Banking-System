@@ -7,7 +7,6 @@ account_id,first_name,last_name,password,balance_checking,balance_savings,overdr
 10006,sara,aaaa,1221,20304.0,5000,0,activate
 10007,Reema,sss,reemmee111,222222,1111,0,activate
 10008,jojo,koko,kokojojo,90000,2,0,activate
-10008,jojo,koko,kokojojo,90000,9000,0,activate
-10008,jojo,koko,kokojojo,90000,2,0,activate
-10009,jojo,koko,kokojojo,90000,9000,0,activate
-10010,jojo,koko,kokojojo,90000,9000,0,activate
+10009,sara,ahmed,sara1234,20000,5000,0,activate
+10010,sara,ahmed,sara1234,20000,5000,0,activate
+10011,sara,ahmed,sara1234,20000,5000,0,activate
