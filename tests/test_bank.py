@@ -1,4 +1,4 @@
-import unittest
+import unittest                   
 from bank.bank import *
 from bank.exceptions import*
 
@@ -11,26 +11,95 @@ class TestBanck(unittest.TestCase):
     def test_creating_bank_object(self):
         self.assertEqual(self.bank.file,'bank.csv' )
 
-
-    # def test_get_customers(self):
-    #     self.assertEqual(bank.get_customers(),[{'account_id': '10001', 'first_name': 'suresh', 'last_name': 'sigera', 'password': 'juagw362', 'balance_checking': '1000', 'balance_savings': '10000', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10002', 'first_name': 'james', 'last_name': 'taylor', 'password': 'idh36%@#FGd', 'balance_checking': '10000', 'balance_savings': '10000', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10003', 'first_name': 'Rama', 'last_name': 'Khalid', 'password': 'Rama123', 'balance_checking': '0.0', 'balance_savings': '1000.0', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10004', 'first_name': 'stacey', 'last_name': 'abrams', 'password': 'DEU8_qw3y72$', 'balance_checking': '2000', 'balance_savings': '20000', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10005', 'first_name': 'jake', 'last_name': 'paul', 'password': 'd^dg23g)@', 'balance_checking': '120000.0', 'balance_savings': '100000', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10006', 'first_name': 'sara', 'last_name': 'aaaa', 'password': '1221', 'balance_checking': '20304.0', 'balance_savings': '5000', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10007', 'first_name': 'Reema', 'last_name': 'sss', 'password': 'reemmee111', 'balance_checking': '222222', 'balance_savings': '1111', 'overdrafts': '0', 'activation': 'activate'}, {'account_id': '10008', 'first_name': 'jojo', 'last_name': 'koko', 'password': 'kokojojo', 'balance_checking': '90000', 'balance_savings': '2', 'overdrafts': '0', 'activation': 'activate'}])
-
     def test_adding_new_customer(self):
-        id=[]
-        with open('bank.csv', 'r', encoding='utf-8') as f:
-            # rows = sum(1 for line in f)
-            for line in f:
-                id= line[0:5]
-        id = int(id)
-        
+        id = 0
+        #Get this code from conor
         with open('bank.csv', 'r', encoding='utf-8') as f:
             rows = sum(1 for line in f)
+        with open('bank.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                id = max(id, int(row['account_id']))
+        
         self.bank.add_customer(Customer('sara', 'ahmed',"sara1234" , 20000, 5000))
         with open('bank.csv', 'r', encoding='utf-8') as f:
             total_rows = sum(1 for line in f)
         #check id is sequential
         self.assertEqual(self.bank.get_id() , id+1)
         #check if new customer has been added to the csv file
-        self.assertEqual(total_rows,rows+1 )
+        self.assertEqual(total_rows, rows+1 )
     
+
+
+class TestAccountClass (unittest.TestCase):
+    def setUp(self):
+        self.bank = Bank('bank.csv')
+        self.new_account =Account('bank.csv')
+        self.customers=[]
+
+    def test_user_login(self):
+        #Test when both ID and Password is wrong 
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.login('2345', '0000' )
+        #Test when The Password is wrong 
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.login('10003', '0000' )
+        #Test when The ID is wrong 
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.login('2345', 'Rama123' )
+        #Test When login with the right data
+        self.allUsers= self.new_account.get_customers()
+        for info in self.allUsers:
+            self.new_account.customers =info
+        self.assertEqual(self.new_account.login('10003', 'Rama123' ), f'Welcome {self.new_account.customers['first_name']}👋, you have been loged in successfully🎉 ')
     
+
+    def test_withdraw_from_checking(self):
+        # Test if user withdraw without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.withdraw_from_checking(20)
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        with self.assertRaises(ValueError):
+            self.new_account.withdraw_from_checking(-29)
+        # retrieve balance_checking befor withdraw
+        balance_checking = float(self.new_account.customers.get('balance_checking'))
+
+        self.new_account.withdraw_from_checking(10)
+        # retrieve balance_checking after withdraw
+        new_balance_checking = float(self.new_account.customers.get('balance_checking'))
+
+        #compare the result
+        self.assertEqual(new_balance_checking, balance_checking-10 )
+
+        # with self.assertRaises(Deactivate):
+        #     self.new_account.customers.update({'activation':'deactivate' })
+        #     self.new_account.update_customer( self.new_account.customers)
+        #     self.new_account.withdraw_from_checking(29)
+        # self.new_account.customers.update({'activation':'activate' })
+        # self.new_account.update_customer( self.new_account.customers)
+
+    def test_withdraw_from_savings(self):
+        # Test if user withdraw without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.withdraw_from_savings(20)
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        with self.assertRaises(ValueError):
+            self.new_account.withdraw_from_savings(-29)
+        # Test if user withdraw with negative number
+        with self.assertRaises(Declined):
+            self.new_account.withdraw_from_savings(float(self.new_account.customers.get('balance_savings'))+ 100 )
+        # retrieve balance_asvings befor withdraw
+        balance_savings= float(self.new_account.customers.get('balance_savings'))
+        self.new_account.withdraw_from_savings(10)
+        # retrieve balance_asvings befor withdraw
+        new_balance_savings= float(self.new_account.customers.get('balance_savings'))
+        #compare the result
+        self.assertEqual( new_balance_savings, balance_savings-10 )
+
+    def test_deposit_into_saving(self):
+        # Test if user Deposit without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.deposit_into_savings(20)
+        

@@ -1,5 +1,5 @@
 from bank.bank import *
-from exceptions import*
+from bank.exceptions import*
 
 bank = Bank('bank.csv')
 while True:
@@ -23,11 +23,12 @@ while True:
                 try:
                     user_id=input('Please Enter Your ID: ')
                     if user_id ==' ' or (not user_id.isdigit()):
-                        raise MissingValue('\nPlease Enter Your Valid ID\n')
+                        raise MissingValue('\nPlease Enter a Valid ID\n')
                     else:
                         break
                 except MissingValue as e:
                     print(e)
+                
             while True:
                 try:
                     password=input('Enter Your password: ')
@@ -37,9 +38,13 @@ while True:
                         break
                 except MissingValue as e:
                     print(e)
-            
-            new_account.login(user_id, password) 
-    
+                
+                    
+            try:
+                print(new_account.login(user_id, password)) 
+            except UseeIsNOTlogin as e:
+                    print(e)
+
             if new_account.islogin == True:
                 break
         user =new_account.customers

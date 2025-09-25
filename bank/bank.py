@@ -16,7 +16,7 @@ class Customer:
         print(f'Sorry {file} file not found:(')
 
     
-    account_id =10006
+    account_id =id
     
     def __init__(self,first_name, last_name, password, balance_checking, balance_savings):
         self.account_id = Customer.id
@@ -119,9 +119,7 @@ class Bank():
                         line.update(data)
                 self.save_update(users)
 
-    def __repr__(self):
-        for info in self.customers:
-            print (info)
+
 
 
 class Account (Bank):
@@ -140,11 +138,11 @@ class Account (Bank):
                 if password in info['password']:
                     self.islogin = True
                     self.customers =info
-                    print(f'Welcome {info['first_name']}👋, you have been loged in successfully🎉 ')
+                    return(f'Welcome {info['first_name']}👋, you have been loged in successfully🎉 ')
                 # else:
                 #     print('User Not found please check your Password')
         if idFound == False or self.islogin==False :
-            print('User Not found please check your ID or password')
+            raise UseeIsNOTlogin('User Not found please check your ID or password')
 
         
 
@@ -257,7 +255,7 @@ class Account (Bank):
                     else:
                         raise ValueError
                 else:
-                    raise Deactivate
+                    raise Deactivate('your accout is deactivated')
 
     #ADD THE Overdraft Protection 
     def withdraw_from_savings(self, price):
@@ -516,7 +514,8 @@ bank = Bank('bank.csv')
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 # new_account =Account('bank.csv')
-# new_account.login( '10003', 'fffff')
+# new_account.login( '10003', 'Rama123')
+# new_account.get_id()
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
 # new_account.withdraw_from_checking(20)
