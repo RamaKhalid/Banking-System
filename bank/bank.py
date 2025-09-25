@@ -291,7 +291,7 @@ class Account (Bank):
             if amount < 1:
                 raise ValueError
             else:
-                new_balance_savings =int(self.customers.get("balance_savings"))
+                new_balance_savings =float(self.customers.get("balance_savings"))
                 new_balance_savings += amount
                 self.customers.get("balance_savings")
                 for info in self.customers:

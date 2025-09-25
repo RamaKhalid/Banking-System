@@ -98,8 +98,41 @@ class TestAccountClass (unittest.TestCase):
         #compare the result
         self.assertEqual( new_balance_savings, balance_savings-10 )
 
-    def test_deposit_into_saving(self):
+    def test_deposit_into_savings(self):
         # Test if user Deposit without login
         with self.assertRaises(UseeIsNOTlogin):
             self.new_account.deposit_into_savings(20)
-        
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user Deposit with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.deposit_into_savings(-29)
+
+        balance_savings= float(self.new_account.customers.get('balance_savings'))
+        self.new_account.deposit_into_savings(20)
+        # retrieve balance_asvings befor withdraw
+        new_balance_savings= float(self.new_account.customers.get('balance_savings'))
+        #compare the result
+        self.assertEqual( new_balance_savings, balance_savings+20 )
+
+
+    def test_deposit_into_Checking(self):
+        # Test if user Deposit without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.deposit_into_checking(20)
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user Deposit with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.deposit_into_checking(-29)
+
+        balance_checking= float(self.new_account.customers.get('balance_checking'))
+        self.new_account.deposit_into_checking(20)
+        # retrieve balance_asvings befor withdraw
+        new_balance_checking= float(self.new_account.customers.get('balance_checking'))
+        #compare the result
+        self.assertEqual( new_balance_checking, balance_checking +20 )
+
+    
+    
+
