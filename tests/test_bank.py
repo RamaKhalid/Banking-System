@@ -231,7 +231,7 @@ class TestAccountClass (unittest.TestCase):
         with self.assertRaises(IdNotFound):
             self.new_account.transfer_savings_to_another_account(29, '1004')
 
-        # retrieve balance_checking befor get transfers
+        # retrieve balance_savings befor get transfers
         balance_savings= float(self.new_account.customers.get('balance_savings'))
         # retrieve the other account balance_checking befor get transfers
         user ={}
@@ -244,7 +244,7 @@ class TestAccountClass (unittest.TestCase):
 
         self.new_account.transfer_savings_to_another_account(30, '10004')
 
-        # retrieve balance_checking after get transfers
+        # retrieve balance_savings after get transfers
         new_balance_savings= float(self.new_account.customers.get('balance_savings'))
         # retrieve the other account balance_checking afet get transfers
         new_user ={}
@@ -257,6 +257,8 @@ class TestAccountClass (unittest.TestCase):
 
         self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
         self.assertEqual(balance_savings-30 , new_balance_savings )
+
+    
 
 
         
