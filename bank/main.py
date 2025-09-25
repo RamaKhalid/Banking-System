@@ -252,6 +252,8 @@ while True:
                             except UseeIsNOTlogin:
                                 print('Sorry You Neet To Login First')
                                 break
+                            except IdNotFound as e:
+                                print(e)
                             else:
                                 break
                     if Transfer_option == 5:

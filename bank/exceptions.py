@@ -9,3 +9,6 @@ class UseeIsNOTlogin(Exception):
 
 class Deactivate(Exception):
     pass
+
+class IdNotFound(Exception):
+    pass

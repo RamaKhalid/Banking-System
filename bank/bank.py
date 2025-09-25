@@ -406,6 +406,7 @@ class Account (Bank):
     def transfer_checking_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
+        userfound= False
         amount = int(amount)
         if self.islogin == False:
             raise UseeIsNOTlogin
@@ -413,14 +414,16 @@ class Account (Bank):
             activation= self.customers['activation']
             if activation == 'activate':
                 if amount < 1:
-                    pass
-                    # raise error
+                    raise ValueError
                 else:
                     users= self.get_customers()
                     for line in users:
                         if user_account_id in line['account_id']:
                             user.update(line)
+                            userfound= True
                             break
+                    if userfound == False:    
+                        raise IdNotFound('There Is No Account With This ID')
                     # print(user)
                     customer_balance_checking =float(self.customers.get("balance_checking"))
                     if amount>= customer_balance_checking:
@@ -461,6 +464,7 @@ class Account (Bank):
     def transfer_savings_to_another_account(self, amount, user_account_id):
         users=[]
         user={}
+        userfound = False
         amount = int(amount)
         if self.islogin == False:
             raise UseeIsNOTlogin
@@ -468,15 +472,17 @@ class Account (Bank):
             activation= self.customers['activation']
             if activation == 'activate':
                 if amount < 1:
-                    pass
-                    # raise error
+                    raise ValueError
+
                 else:
                     users= self.get_customers()
                     for line in users:
                         if user_account_id in line['account_id']:
                             user.update(line)
+                            userfound= True
                             break
-                    # print(user)
+                    if userfound == False:
+                        raise IdNotFound('There Is No Account With This ID')
                     customer_balance_savings =float(self.customers.get("balance_savings"))
                     if amount>= customer_balance_savings:
                         print(f'Sorry The transaction could not be processed because the account does not have sufficient balance of {customer_balance_savings}$')

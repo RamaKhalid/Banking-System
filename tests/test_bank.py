@@ -87,13 +87,13 @@ class TestAccountClass (unittest.TestCase):
         self.new_account.login('10003', 'Rama123' )
         with self.assertRaises(ValueError):
             self.new_account.withdraw_from_savings(-29)
-        # Test if user withdraw with negative number
+        # Test if user withdraw More than they have
         with self.assertRaises(Declined):
             self.new_account.withdraw_from_savings(float(self.new_account.customers.get('balance_savings'))+ 100 )
         # retrieve balance_asvings befor withdraw
         balance_savings= float(self.new_account.customers.get('balance_savings'))
         self.new_account.withdraw_from_savings(10)
-        # retrieve balance_asvings befor withdraw
+        # retrieve balance_asvings after withdraw
         new_balance_savings= float(self.new_account.customers.get('balance_savings'))
         #compare the result
         self.assertEqual( new_balance_savings, balance_savings-10 )
@@ -108,9 +108,10 @@ class TestAccountClass (unittest.TestCase):
         with self.assertRaises(ValueError):
             self.new_account.deposit_into_savings(-29)
 
+        # retrieve balance_asvings befor withdraw
         balance_savings= float(self.new_account.customers.get('balance_savings'))
         self.new_account.deposit_into_savings(20)
-        # retrieve balance_asvings befor withdraw
+        # retrieve balance_asvings afet withdraw
         new_balance_savings= float(self.new_account.customers.get('balance_savings'))
         #compare the result
         self.assertEqual( new_balance_savings, balance_savings+20 )
@@ -126,13 +127,138 @@ class TestAccountClass (unittest.TestCase):
         with self.assertRaises(ValueError):
             self.new_account.deposit_into_checking(-29)
 
+        # retrieve balance_asvings befor withdraw
         balance_checking= float(self.new_account.customers.get('balance_checking'))
         self.new_account.deposit_into_checking(20)
-        # retrieve balance_asvings befor withdraw
+        # retrieve balance_asvings after withdraw
         new_balance_checking= float(self.new_account.customers.get('balance_checking'))
         #compare the result
         self.assertEqual( new_balance_checking, balance_checking +20 )
 
     
-    
+    def test_transfer_from_savings_to_checking(self):
+        # Test if user transfer without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.transfer_from_savings_to_checking(20)
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user transfer with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.transfer_from_savings_to_checking(-29)
+        # Test if user transfer More than they have
+        with self.assertRaises(Declined):
+            self.new_account.transfer_from_savings_to_checking(float(self.new_account.customers.get('balance_savings'))+ 100 )
+
+        balance_checking= float(self.new_account.customers.get('balance_checking'))
+        balance_savings= float(self.new_account.customers.get('balance_savings'))
+        self.new_account.transfer_from_savings_to_checking(20)
+        new_balance_savings= float(self.new_account.customers.get('balance_savings'))
+        new_balance_checking= float(self.new_account.customers.get('balance_checking'))
+        self.assertEqual( new_balance_checking, balance_checking +20 )
+        self.assertEqual( new_balance_savings, balance_savings-20 )
+
+
+    def test_transfer_from_checking_to_savings(self):
+        # Test if user transfer without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.transfer_from_checking_to_savings(20)
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user transfer with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.transfer_from_checking_to_savings(-29)
+
+        balance_checking= float(self.new_account.customers.get('balance_checking'))
+        balance_savings= float(self.new_account.customers.get('balance_savings'))
+        self.new_account.transfer_from_checking_to_savings(20)
+        new_balance_savings= float(self.new_account.customers.get('balance_savings'))
+        new_balance_checking= float(self.new_account.customers.get('balance_checking'))
+        self.assertEqual( new_balance_checking, balance_checking -20 )
+        self.assertEqual( new_balance_savings, balance_savings+20 )
+
+
+    def test_transfer_checking_to_another_account(self):
+        # Test if user transfer without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.transfer_checking_to_another_account(20, '10004')
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user transfer with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.transfer_checking_to_another_account(-29, '10004')
+        # Test if user transfer with wrong ID
+        with self.assertRaises(IdNotFound):
+            self.new_account.transfer_checking_to_another_account(29, '1004')
+
+        # retrieve balance_checking befor get transfers
+        balance_checking= float(self.new_account.customers.get('balance_checking'))
+        # retrieve the other account balance_checking befor get transfers
+        user ={}
+        with open('bank.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if '10004' in row['account_id']:
+                    user.update(row)
+        user_balance_checking= float(user.get('balance_checking'))
+
+        self.new_account.transfer_checking_to_another_account(30, '10004')
+
+        # retrieve balance_checking after get transfers
+        new_balance_checking= float(self.new_account.customers.get('balance_checking'))
+        # retrieve the other account balance_checking afet get transfers
+        new_user ={}
+        with open('bank.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if '10004' in row['account_id']:
+                    new_user.update(row)
+        new_user_balance_checking= float(new_user.get('balance_checking'))
+
+        self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
+        self.assertEqual(balance_checking-30 , new_balance_checking )
+
+
+    def test_transfer_savings_to_another_account(self):
+        # Test if user transfer without login
+        with self.assertRaises(UseeIsNOTlogin):
+            self.new_account.transfer_savings_to_another_account(20, '10004')
+        #login
+        self.new_account.login('10003', 'Rama123' )
+        # Test if user transfer with negative number
+        with self.assertRaises(ValueError):
+            self.new_account.transfer_savings_to_another_account(-29, '10004')
+        # Test if user transfer with wrong ID
+        with self.assertRaises(IdNotFound):
+            self.new_account.transfer_savings_to_another_account(29, '1004')
+
+        # retrieve balance_checking befor get transfers
+        balance_savings= float(self.new_account.customers.get('balance_savings'))
+        # retrieve the other account balance_checking befor get transfers
+        user ={}
+        with open('bank.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if '10004' in row['account_id']:
+                    user.update(row)
+        user_balance_checking= float(user.get('balance_checking'))
+
+        self.new_account.transfer_savings_to_another_account(30, '10004')
+
+        # retrieve balance_checking after get transfers
+        new_balance_savings= float(self.new_account.customers.get('balance_savings'))
+        # retrieve the other account balance_checking afet get transfers
+        new_user ={}
+        with open('bank.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if '10004' in row['account_id']:
+                    new_user.update(row)
+        new_user_balance_checking= float(new_user.get('balance_checking'))
+
+        self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
+        self.assertEqual(balance_savings-30 , new_balance_savings )
+
+
+        
+
 
