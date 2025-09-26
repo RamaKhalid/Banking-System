@@ -39,6 +39,7 @@ class Bank():
         self.customers = []
         self.allUsers= []
         self.transaction={}
+        self.all_transactions =[]
         
 
     def get_id(self):
@@ -229,16 +230,36 @@ class Account (Bank):
             print('Thank you for settling The outstanding dues. The account has been reactivated and is now fully operational')
 
 
+    def generate_report(self):
+        id_file= self.customers.get("account_id")+'_statement.txt'
+        self.get_transaction_hisory()
+        try:
+            with open(id_file, 'w',encoding="utf-8" ) as file:
+                file.write(f'Welcome {self.customers.get("first_name")}👋\nAccount ID: {self.customers['account_id']}               First Name: {self.customers['first_name']}                 Last Name: {self.customers['last_name']}             Password: {self.customers['password']} \nBalance Checking: {self.customers['balance_checking']}       Balance_Savings: {self.customers['balance_savings']}        Times of Overdrafts: {self.customers['overdrafts']}      Activation state: {self.customers['activation']}')
+                file.write('\nYour Recent Transactions:\n')
+                for row in self.all_transactions:
+                    file.write(f'{row}\n')
+        except FileNotFoundError:
+            print(f'Sorry  file not found:(')
+
+
+
     def get_transaction_hisory(self):
         try:
             with open(self.customers.get("account_id")+'.csv', "r") as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    print(row)
-                #     all_transaction.append(row)
-                # return all_transaction
+                    # print(row)
+                    self.all_transactions.append(row)
+                return self.all_transactions
         except FileNotFoundError:
             print(f'Sorry, file not found:(')
+            
+
+    def print_transaction_hisory(self):
+        self.get_transaction_hisory()
+        for row in self.all_transactions:
+            print(row)
 
     def save_transaction(self):
         id_file= self.customers.get("account_id")+'.csv'
@@ -595,6 +616,7 @@ bank = Bank('bank.csv')
 
 new_account =Account('bank.csv')
 print(new_account.login( '10008', 'kokojojo'))
+new_account.generate_report()
 # new_account.get_id()
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
@@ -605,7 +627,7 @@ print(new_account.login( '10008', 'kokojojo'))
 # new_account.transfer_from_checking_to_savings(20)
 # new_account.transfer_savings_to_another_account(100, '10005' )
 # new_account.transfer_checking_to_another_account(100, '10005' )
-# new_account.get_transaction_hisory()
+# new_account.print_transaction_hisory()
 # new_account.open_transaction_file()
 # bank.update_customer()
 # print(new_account.customers)

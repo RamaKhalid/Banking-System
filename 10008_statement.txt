@@ -1,0 +1,15 @@
+Welcome jojo👋
+Account ID: 10008               First Name: jojo                 Last Name: koko             Password: kokojojo 
+Balance Checking: 89360.0       Balance_Savings: 290890.0        Times of Overdrafts: 0      Activation state: activate
+Your Recent Transactions:
+['transaction_id', 'date', 'time', 'type', 'amount', 'account', 'balance']
+['2b5b5d82', '2025-09-26', '17:55:11 PM', 'withdraw', '-20', 'checking', '89440.0']
+['f1272465', '2025-09-26', '17:55:11 PM', 'withdraw', '-20', 'checking', '89420.0']
+['834872f3', '2025-09-26', '18:15:58 PM', 'withdraw', '-20', 'checking', '89400.0']
+['b7cf94e4', '2025-09-26', '18:15:58 PM', 'withdraw', '-20', 'checking', '89380.0']
+['cf518d0c', '2025-09-26', '18:34:34 PM', 'Transfer', '-20', 'Savings', '290970.0']
+['3bc90153', '2025-09-26', '18:34:34 PM', 'Transfer', '+20', 'Checking', '89480.0']
+['7c0efd42', '2025-09-26', '18:34:34 PM', 'Transfer', '-20', 'Checking', '89460.0']
+['c8ed03a0', '2025-09-26', '18:34:34 PM', 'Transfer', '+20', 'Savings', '290990.0']
+['0d24a96b', '2025-09-26', '18:34:34 PM', 'Transfer to 10005', '-100', 'Savings', '290890.0']
+['69a7d3cf', '2025-09-26', '18:34:34 PM', 'Transfer to 10005', '-100', 'Checking', '89360.0']
