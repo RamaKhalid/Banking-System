@@ -329,6 +329,8 @@ while True:
                             
                     except MissingValue as e:
                         print(e)
+                    except WeekPassword as e:
+                        print(e)
                 while True:
                     try:
                         balance_checking=input('Enter Your balance checking: ')
@@ -350,9 +352,33 @@ while True:
                             break
                     except MissingValue as e:
                         print(e)
-                bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings))
+                while True:
+                    try:
+                        print('would you like to customize your overdraft limit? or keep it as defult as -$100 limit')
+                        overdraft =input('Please Enter Y to customize it or N to keep the defult: ')
+                        overdraft = overdraft.upper()
+                        if overdraft =='N':
+                            print('Thank you For Choosing This Bank! Your overdraft limit will be -$100')
+                            overdraft_limit = -100
+                            break
+                        elif overdraft =='Y':
+                            overdraft_limit= input('Please Enter The Limit You Want: ')
+                            overdraft_limit = int(overdraft_limit)
+                            if overdraft_limit < 0:
+                                print(f'Thank you For Choosing This Bank! Your overdraft limit will be {overdraft_limit}$')
+                                break
+                            else:
+                                raise MissingValue('\nPlease enter a overdraft_limit that is a negative Number\n')                  
+
+                        else:
+                            raise MissingValue('\nPlease enter  Y to customize it or N to keep the defult:')
+                        
+                    except MissingValue as e:
+                        print(e)
+                bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings,overdraft_limit))
                 print('')
                 print(bank.get_new_customer_info())
+                
             except MissingValue as e:
                 print(e)
     

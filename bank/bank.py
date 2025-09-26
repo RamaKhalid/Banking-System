@@ -20,7 +20,7 @@ class Customer:
     
     account_id =id
     
-    def __init__(self,first_name, last_name, password, balance_checking, balance_savings):
+    def __init__(self,first_name, last_name, password, balance_checking, balance_savings, overdraft_limit):
         self.account_id = Customer.id
         self.first_name =first_name
         self.last_name =last_name
@@ -30,6 +30,7 @@ class Customer:
         Customer.account_id += 1
         self.overdrafts = 0
         self.activation= 'activate'
+        self.overdraft_limit = overdraft_limit
 
 
 
@@ -40,6 +41,7 @@ class Bank():
         self.allUsers= []
         self.transaction={}
         self.all_transactions =[]
+
         
 
     def get_id(self):
@@ -61,7 +63,7 @@ class Bank():
     def save(self):
         try:
             with open(self.file, 'a',newline="" ) as file:
-                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings', 'overdrafts','activation']
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings', 'overdrafts','activation','overdraft_limit']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
                 writer.writerows({
                     'account_id':info.account_id, 
@@ -71,7 +73,8 @@ class Bank():
                     'balance_checking': info.balance_checking,
                     'balance_savings': info.balance_savings,
                     'overdrafts':0,
-                    'activation': 'activate'
+                    'activation': 'activate',
+                    'overdraft_limit':info.overdraft_limit
                 } 
                     for info in self.customers)
             print('New Account has been added successfully🎉')
@@ -86,7 +89,7 @@ class Bank():
     def save_update(self,list):
         try:
             with open(self.file, 'w',newline="" ) as file:
-                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation']
+                fieldnames =['account_id', 'first_name', 'last_name', 'password', 'balance_checking', 'balance_savings','overdrafts','activation','overdraft_limit']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
                 writer.writeheader()
                 writer.writerows({
@@ -97,7 +100,8 @@ class Bank():
                     'balance_checking': info['balance_checking'],
                     'balance_savings': info['balance_savings'],
                     'overdrafts': info['overdrafts'],
-                    'activation': info['activation']
+                    'activation': info['activation'],
+                    'overdraft_limit':info['overdraft_limit']
                 } 
                     for info in list)
         except FileNotFoundError:
@@ -122,17 +126,18 @@ class Bank():
     def get_new_customer_info(self ):
         for i in self.customers:
         # return(self.customers['account_id'])
-            return (f'New Account Information: \nAccount_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts: {i.overdrafts} \nActivation: {i.activation}')
+            return (f'New Account Information: \nAccount_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts: {i.overdrafts} \nActivation: {i.activation} \nOverdraft_limit: {i.overdraft_limit}')
 
 
     def customer_info(self):
-        return (f'Account_id: {self.customers['account_id']} \nFirst Name: {self.customers['first_name']} \nLast Name: {self.customers['last_name']} \nPassword: {self.customers['password']} \nBalance Checking: {self.customers['balance_checking']} \nBalance_Savings: {self.customers['balance_savings']} \nOverdrafts: {self.customers['overdrafts']} \nActivation: {self.customers['activation']}')
+        return (f'Account_id: {self.customers['account_id']} \nFirst Name: {self.customers['first_name']} \nLast Name: {self.customers['last_name']} \nPassword: {self.customers['password']} \nBalance Checking: {self.customers['balance_checking']} \nBalance_Savings: {self.customers['balance_savings']} \nOverdrafts: {self.customers['overdrafts']} \nActivation: {self.customers['activation']} \n overdraft_limit: {self.customers['overdraft_limit']}')
 
 
 class Account (Bank):
     def __init__(self, file ):
         super().__init__(file)
         self.islogin = False
+        
         
     
 
@@ -156,10 +161,10 @@ class Account (Bank):
     def overdraft_Protection(self, balance, amount):
         new_balance =float(balance)
         new_balance -= amount
-        if new_balance < -100:
-            print('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)' )
+        if new_balance < float(self.customers.get('overdraft_limit')):
+            print(f'Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than {self.customers.get('overdraft_limit')}$)' )
             return balance
-        elif balance>=0 and new_balance<0:
+        elif balance>=0 and new_balance<0 and (new_balance+35 > float(self.customers.get('overdraft_limit'))):
             print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
             # Find better message
             charge = input('To continue Enter Y or N to stop: ')
@@ -175,7 +180,7 @@ class Account (Bank):
                 return balance
             else:
                 raise ValueError('Please Enter Y or N')
-        elif balance <0 and new_balance>= -100:
+        elif balance <0 and new_balance>= float(self.customers.get('overdraft_limit')):
             if (self.overdrafts_count()):
                 print('Your Transaction is stoped')
                 return balance
@@ -264,10 +269,13 @@ class Account (Bank):
     def save_transaction(self):
         id_file= self.customers.get("account_id")+'.csv'
         try:
+            with open(id_file, 'w',newline="" ) as file:
+                fieldnames =['transaction_id','date','time','type','amount','account','balance']
+                writer = csv.DictWriter(file, fieldnames= fieldnames)
+                writer.writeheader()
             with open(id_file, 'a',newline="" ) as file:
                 fieldnames =['transaction_id','date','time','type','amount','account','balance']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
-                # writer.writeheader()
                 writer.writerow({
                     'transaction_id':self.transaction.get('transaction_id'), 
                     'date': self.transaction.get('date'),
@@ -284,7 +292,6 @@ class Account (Bank):
         timedate=datetime.datetime.now()
         id = str(uuid.uuid4())
         id = id[0:8]
-        id_file= self.customers.get("account_id")+'.csv'
         self.transaction.update({'transaction_id':id ,
                                 'date': timedate.date() ,
                                 'time': timedate.time().strftime('%X')+' '+ timedate.strftime("%p"),
@@ -615,12 +622,15 @@ bank = Bank('bank.csv')
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
 
 new_account =Account('bank.csv')
-print(new_account.login( '10008', 'kokojojo'))
-new_account.generate_report()
+print(new_account.login( '10013', 'meme@1234'))
+new_account.customer_info()
+# print(bank.get_customers())
+# new_account.generate_report()
 # new_account.get_id()
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
 # new_account.withdraw_from_checking(20)
+new_account.withdraw_from_checking(80080)
 # new_account.withdraw_from_checking(20)
 # # new_account.withdraw_from_savings(80)
 # new_account.transfer_from_savings_to_checking(20)
