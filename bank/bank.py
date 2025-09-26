@@ -73,10 +73,14 @@ class Bank():
                     'activation': 'activate'
                 } 
                     for info in self.customers)
+            print('New Account has been added successfully🎉')
         except FileNotFoundError:
             print(f'Sorry {self.file} file not found:(')
         
 
+    def add_customer(self,customer):
+        self.customers.append(customer)
+        self.save() 
 
     def save_update(self,list):
         try:
@@ -99,16 +103,6 @@ class Bank():
             print(f'Sorry {file} file not found:(')
 
 
-    def add_customer(self,customer):
-        self.customers.append(customer)
-        self.save() 
-
-
-    def customer_info(self ):
-        for i in self.customers:
-            return (f'Account_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts: {i.overdrafts} \nActivation: {i.activation}')
-
-
     def update_customer(self, data):
                 users= []
                 try:
@@ -124,6 +118,14 @@ class Bank():
                 self.save_update(users)
 
 
+    def get_new_customer_info(self ):
+        for i in self.customers:
+        # return(self.customers['account_id'])
+            return (f'New Account Information: \nAccount_id: {i.account_id} \nFirst Name: {i.first_name} \nLast Name: {i.last_name} \nPassword: {i.password} \nBalance Checking: {i.balance_checking} \nBalance_Savings: {i.balance_savings} \nOverdrafts: {i.overdrafts} \nActivation: {i.activation}')
+
+
+    def customer_info(self):
+        return (f'Account_id: {self.customers['account_id']} \nFirst Name: {self.customers['first_name']} \nLast Name: {self.customers['last_name']} \nPassword: {self.customers['password']} \nBalance Checking: {self.customers['balance_checking']} \nBalance_Savings: {self.customers['balance_savings']} \nOverdrafts: {self.customers['overdrafts']} \nActivation: {self.customers['activation']}')
 
 
 class Account (Bank):
@@ -227,13 +229,14 @@ class Account (Bank):
             print('Thank you for settling The outstanding dues. The account has been reactivated and is now fully operational')
 
 
-    def open_transaction_file(self):
+    def get_transaction_hisory(self):
         try:
             with open(self.customers.get("account_id")+'.csv', "r") as file:
-                reader = csv.DictReader(file)
+                reader = csv.reader(file)
                 for row in reader:
-                    self.transaction.update(row)
-                return self.transaction
+                    print(row)
+                #     all_transaction.append(row)
+                # return all_transaction
         except FileNotFoundError:
             print(f'Sorry, file not found:(')
 
@@ -270,6 +273,7 @@ class Account (Bank):
                                 'balance':balance})
         # print(self.transaction.items())
         self.save_transaction()
+
 
 
     def withdraw_from_checking(self, price):
@@ -597,12 +601,14 @@ print(new_account.login( '10008', 'kokojojo'))
 # new_account.withdraw_from_checking(20)
 # new_account.withdraw_from_checking(20)
 # # new_account.withdraw_from_savings(80)
-new_account.transfer_from_savings_to_checking(20)
-new_account.transfer_from_checking_to_savings(20)
-new_account.transfer_savings_to_another_account(100, '10005' )
-new_account.transfer_checking_to_another_account(100, '10005' )
+# new_account.transfer_from_savings_to_checking(20)
+# new_account.transfer_from_checking_to_savings(20)
+# new_account.transfer_savings_to_another_account(100, '10005' )
+# new_account.transfer_checking_to_another_account(100, '10005' )
+# new_account.get_transaction_hisory()
+# new_account.open_transaction_file()
 # bank.update_customer()
 # print(new_account.customers)
 # print(Customer.id)
 # print(bank.get_customers())
-# print(bank.customer_info())
+# print(new_account.customer_info())

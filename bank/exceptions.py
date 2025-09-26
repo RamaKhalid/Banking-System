@@ -12,3 +12,6 @@ class Deactivate(Exception):
 
 class IdNotFound(Exception):
     pass
+
+class WeekPassword(Exception):
+    pass

@@ -1,5 +1,6 @@
 from bank.bank import *
 from bank.exceptions import*
+import re
 
 bank = Bank('bank.csv')
 while True:
@@ -55,11 +56,12 @@ while True:
             print('2. Deposit Money')
             print('3. Transfer Money')
             print('4. See My Account information')
-            print('5. Go BAck to the main page')
+            print('5. Display Transaction History')
+            print('6. Go BAck to the main page')
             try:
                 option= input("\nPlease Enter The Service Number: ")
                 option= int(option)
-                if option <1 or option >5:
+                if option <1 or option >6:
                     raise ValueError
             except ValueError :
                 print("Please Enter a vaild input from 1 to 5")
@@ -193,7 +195,7 @@ while True:
                             except Declined:
                                 pass
                             except UseeIsNOTlogin:
-                                print('Sorry You Neet To Login First')
+                                print('Sorry You Need To Login First')
                                 break
                             else:
                                 break
@@ -260,8 +262,35 @@ while True:
                         break
                 
             if option == 4:
-                print(bank.customer_info())
+                print(new_account.customer_info())
+                while True: 
+                    back = input('\nIf you want to go back enter Q: ')
+                    try:
+                        back =back.upper()
+                        if back == 'Q':
+                            break
+                        else:
+                            raise ValueError
+                    except ValueError:
+                        print('Please Enter Q to Quit')
+                        
+                        
+
             if option == 5:
+                new_account.get_transaction_hisory()
+                while True:
+                    back = input('\nIf you want to go back enter Q: ')
+                    try:
+                        back =back.upper()
+                        if back == 'Q':
+                            break
+                        else:
+                            raise ValueError 
+                    except ValueError:
+                        print('Please Enter Q to Quit')
+                        
+
+            if option == 6:
                 break
 
     if choice == 2:
@@ -290,7 +319,14 @@ while True:
                         if password == "" :
                             raise MissingValue('\nPlease Enter A Proper Password\n')
                         else:
-                            break
+                            leter =any(l.isalpha() for l in password)
+                            num =any(l.isdigit() for l in password)
+                            regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+                            if regex.search(password) != None and leter and num and len(password)>=8 :
+                                break
+                            else:
+                                raise WeekPassword('Your Password is week, it should contain at least 8 characters with letters, numbers, and special characters')
+                            
                     except MissingValue as e:
                         print(e)
                 while True:
@@ -316,7 +352,7 @@ while True:
                         print(e)
                 bank.add_customer(Customer(first_name, last_name, password, balance_checking, balance_savings))
                 print('')
-                print(bank.customer_info())
+                print(bank.get_new_customer_info())
             except MissingValue as e:
                 print(e)
     
