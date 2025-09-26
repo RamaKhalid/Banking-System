@@ -186,6 +186,7 @@ class Account (Bank):
             for info in self.customers:
                 if info == 'activation':
                     self.customers.update({info:deactivate})
+                    self.update_customer(self.customers)
             raise Deactivate
         elif overdrafts== 1:
             print(f'Dear {self.customers['first_name']} This will be Your second overdrafts and Continuing with this Transaction will Deactivate Your Account')
@@ -312,7 +313,6 @@ class Account (Bank):
             if amount < 1:
                 raise ValueError
             else:
-                
                 new_balance_checking =float(self.customers.get("balance_checking"))
                 new_balance_checking += amount
                 self.customers.get("balance_checking")

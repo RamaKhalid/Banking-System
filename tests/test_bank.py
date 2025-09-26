@@ -1,6 +1,9 @@
 import unittest                   
 from bank.bank import *
 from bank.exceptions import*
+from unittest import mock
+from unittest.mock import patch
+
 
 class TestBanck(unittest.TestCase):
     def setUp(self):
@@ -255,12 +258,28 @@ class TestAccountClass (unittest.TestCase):
                     new_user.update(row)
         new_user_balance_checking= float(new_user.get('balance_checking'))
 
-        self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
         self.assertEqual(balance_savings-30 , new_balance_savings )
+        self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
 
-    
+    @mock.patch('builtins.input', side_effect=['y', 'y'])
+    def test_deactivation(self, mock_input):
+        #login
+        self.new_account.login('10001', 'juagw362' )
+        # First overdraft
+        self.new_account.withdraw_from_checking(10)
+        #second overdraft
+        self.new_account.withdraw_from_checking(10)
 
-
+        with self.assertRaises(Deactivate):
+            # Third overdraft
+            self.new_account.withdraw_from_checking(10)
         
-
-
+    # Source: https://realpython.com/lessons/mocking-print-unit-tests/
+    @patch('builtins.print')
+    def test_reactivat(self, mock_print):
+        #login
+        self.new_account.login('10001', 'juagw362' )
+        self.new_account.deposit_into_checking(55)
+        mock_print.assert_called_with('Thank you for settling The outstanding dues. The account has been reactivated and is now fully operational')
+    
+    
