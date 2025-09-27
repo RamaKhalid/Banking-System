@@ -2,6 +2,7 @@ import csv
 from bank.exceptions import*
 import datetime
 import uuid
+import random
 
 class Customer:
 
@@ -133,6 +134,32 @@ class Bank():
         return (f'Account_id: {self.customers['account_id']} \nFirst Name: {self.customers['first_name']} \nLast Name: {self.customers['last_name']} \nPassword: {self.customers['password']} \nBalance Checking: {self.customers['balance_checking']} \nBalance_Savings: {self.customers['balance_savings']} \nOverdrafts: {self.customers['overdrafts']} \nActivation: {self.customers['activation']} \n overdraft_limit: {self.customers['overdraft_limit']}')
 
 
+    def top_customer(self):
+        count =[]
+        winer ={}
+        self.allUsers= self.get_customers()
+        for row in self.allUsers:
+            count.append({'account_id':row['account_id'],
+                        'total_balnce': float(row['balance_checking']) + float(row['balance_savings']) })
+        winers = sorted(count,reverse =True, key=lambda d: d['total_balnce'])[:3]
+        # print(winers)
+        winerId =random.choice(winers)
+        # return winer
+
+        for row in self.allUsers:
+            if  winerId['account_id'] == row['account_id']:
+                winer.update(row)
+        
+        new_checking = float(winer['balance_checking'])
+        new_checking += 100
+        winer.update({'balance_checking':new_checking})
+        self.update_customer(winer)
+        print(f'\ncongratulation to {winer['first_name']} 🎉, \nThey Are One Of Our Top Customers!💰 With an account balance of $ {winerId['total_balnce']} they\'ll receive a $100 Reward🤑🎉\n')
+
+
+
+
+
 class Account (Bank):
     def __init__(self, file ):
         super().__init__(file)
@@ -156,7 +183,6 @@ class Account (Bank):
         if idFound == False or self.islogin==False :
             raise UseeIsNOTlogin('User Not found please check your ID or password')
 
-        
 
     def overdraft_Protection(self, balance, amount):
         new_balance =float(balance)
@@ -164,7 +190,7 @@ class Account (Bank):
         if new_balance < float(self.customers.get('overdraft_limit')):
             print(f'Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than {self.customers.get('overdraft_limit')}$)' )
             return balance
-        elif balance>=0 and new_balance<0 and (new_balance+35 > float(self.customers.get('overdraft_limit'))):
+        elif new_balance<0 and (new_balance-35 > float(self.customers.get('overdraft_limit'))):
             print(f'Your account have only {balance}$ and overdraft will charge you with 35$ are sure to continue?')
             # Find better message
             charge = input('To continue Enter Y or N to stop: ')
@@ -218,7 +244,7 @@ class Account (Bank):
             for info in self.customers:
                 if info == 'overdrafts':
                     self.customers.update({info:overdrafts})
-    
+
 
     def reactivate(self, user):
         # Handeling reactivate account
@@ -248,7 +274,6 @@ class Account (Bank):
             print(f'Sorry  file not found:(')
 
 
-
     def get_transaction_hisory(self):
         try:
             with open(self.customers.get("account_id")+'.csv', "r") as file:
@@ -259,20 +284,25 @@ class Account (Bank):
                 return self.all_transactions
         except FileNotFoundError:
             print(f'Sorry, file not found:(')
-            
+
 
     def print_transaction_hisory(self):
         self.get_transaction_hisory()
         for row in self.all_transactions:
             print(row)
 
+
     def save_transaction(self):
         id_file= self.customers.get("account_id")+'.csv'
         try:
-            with open(id_file, 'w',newline="" ) as file:
+            with open(id_file, 'x',newline="" ) as file:
                 fieldnames =['transaction_id','date','time','type','amount','account','balance']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
                 writer.writeheader()
+        except FileExistsError:
+            pass
+
+        try:
             with open(id_file, 'a',newline="" ) as file:
                 fieldnames =['transaction_id','date','time','type','amount','account','balance']
                 writer = csv.DictWriter(file, fieldnames= fieldnames)
@@ -288,6 +318,7 @@ class Account (Bank):
         except FileNotFoundError:
             print(f'Sorry  file not found:(')
 
+
     def update_transaction(self,type, amount, account, balance):
         timedate=datetime.datetime.now()
         id = str(uuid.uuid4())
@@ -301,7 +332,6 @@ class Account (Bank):
                                 'balance':balance})
         # print(self.transaction.items())
         self.save_transaction()
-
 
 
     def withdraw_from_checking(self, price):
@@ -342,7 +372,7 @@ class Account (Bank):
                 else:
                     raise Deactivate('your accout is deactivated')
 
-    #ADD THE Overdraft Protection 
+
     def withdraw_from_savings(self, price):
             price = int(price)
             if self.islogin == False:
@@ -367,7 +397,7 @@ class Account (Bank):
 
                 else:
                     raise ValueError
-    
+
 
     def deposit_into_savings(self, amount):
         amount = int(amount)
@@ -388,7 +418,6 @@ class Account (Bank):
                 self.update_customer( self.customers)
                 self.update_transaction('Deposit', '+'+str(amount), 'Savings', new_balance_savings)
                 print(f'A {amount} have been Deposit to your Savings account successfully and your current Savings balnce is {new_balance_savings}$')                        
-
 
 
     def deposit_into_checking(self, amount):
@@ -413,7 +442,6 @@ class Account (Bank):
                 self.reactivate(self.customers)
 
 
-        
     def transfer_from_savings_to_checking(self, amount):
         amount = int(amount)
         if self.islogin == False:
@@ -446,7 +474,6 @@ class Account (Bank):
                     self.reactivate(self.customers)
                 else:
                     raise ValueError
-                
 
 
     def transfer_from_checking_to_savings(self, amount):
@@ -498,6 +525,7 @@ class Account (Bank):
                         raise ValueError
             else:
                 raise Deactivate
+
 
     def transfer_checking_to_another_account(self, amount, user_account_id):
         users=[]
@@ -612,6 +640,7 @@ class Account (Bank):
                 print(f'your account is deactivated due to your over overdrafts \nKindly settle your outstanding balance. The amount credited to your account is {self.customers['balance_checking']}')
 
 
+    
 
 
 bank = Bank('bank.csv')
@@ -620,7 +649,7 @@ bank = Bank('bank.csv')
 # bank.add_customer(Customer('sara', 'aaaa',"jjj" , 20000, 5000))
 # print(bank.get_id())
 # ctr=Customer('Rama', 'Khalid', 'Rama123', 20000, 5000)
-
+bank.top_customer()
 new_account =Account('bank.csv')
 print(new_account.login( '10013', 'meme@1234'))
 new_account.customer_info()
@@ -630,7 +659,7 @@ new_account.customer_info()
 # # new_account.deposit_into_checking(500)
 # # new_account.deposit_into_savings(500)
 # new_account.withdraw_from_checking(20)
-new_account.withdraw_from_checking(80080)
+# new_account.withdraw_from_checking(10)
 # new_account.withdraw_from_checking(20)
 # # new_account.withdraw_from_savings(80)
 # new_account.transfer_from_savings_to_checking(20)

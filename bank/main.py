@@ -8,13 +8,14 @@ while True:
     print('What would you want to do?')
     print('1. Login')
     print('2. Add New Customer')
+    print('3. Reward The Top Customer💰')
     try:
         choice= input("Please Enter The Service Number: ")
         choice =int(choice)
-        if choice < 1 or choice >2:
+        if choice < 1 or choice >3:
             raise ValueError
     except ValueError :
-        print("Please Enter a vaild input 1 or 2")
+        print("Please Enter a vaild input 1 or 3")
     
 
     if choice == 1:
@@ -381,7 +382,19 @@ while True:
                 
             except MissingValue as e:
                 print(e)
-    
+    if choice == 3:
+        bank.top_customer()
+        while True:
+            try:
+                back= input('Enter B to Get Back To The Main Page: ')
+                back =back.upper()
+                if back== 'B':
+                    break
+                else:
+                    raise ValueError
+            except ValueError:
+                print ('Please Enter B To Get Back')
+        
     # except ValueError:
     #     print("Please Enter a vaild input")
     # except MissingValue as e:
