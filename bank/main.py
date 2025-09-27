@@ -58,7 +58,8 @@ while True:
             print('3. Transfer Money')
             print('4. See My Account information')
             print('5. Display Transaction History')
-            print('6. Go BAck to the main page')
+            print('6. Generate Account Statement Report')
+            print('7. Go BAck to the main page')
             try:
                 option= input("\nPlease Enter The Service Number: ")
                 option= int(option)
@@ -69,9 +70,9 @@ while True:
 
             if option == 1:
                 while True:
-                    print('\nChoice Your Account ')
-                    print('1. withdraw Money from checking')
-                    print('2. withdraw Money from savings')
+                    print('\nChoose an Account for Withdraw ')
+                    print('1. Withdraw Money from checking')
+                    print('2. Withdraw Money from savings')
                     print('3. Go BAck to the Services page')
                     try:
                         withdraw_option= input("\nPlease Enter The Service Number: ")
@@ -96,6 +97,9 @@ while True:
                                 break
                             except Deactivate:
                                 print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
+                            except MissingValue as e:
+                                print(e)
                                 break
                             else:
                                 break
@@ -124,7 +128,7 @@ while True:
 
             if option == 2:
                 while True:
-                    print('\nChoice Your Account ')
+                    print('\nChoose an Account for Deposit')
                     print('1. Deposit Money To checking')
                     print('2. Deposit Money To savings')
                     print('3. Go BAck to the Services page')
@@ -163,6 +167,9 @@ while True:
                             except UseeIsNOTlogin:
                                 print('Sorry You Neet To Login First')
                                 break
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
 
@@ -171,7 +178,7 @@ while True:
 
             if option == 3:
                 while True:
-                    print('\nChoice Your Account ')
+                    print('\nSelect a Transfer Option ')
                     print('1. Transfer Mony From Savings To Checking')
                     print('2. Transfer Money From Checking To Savings')
                     print('3. Transfer Money From Checking To Another Account')
@@ -218,6 +225,8 @@ while True:
                             except Deactivate:
                                 print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
                                 break
+                            except MissingValue as e:
+                                print(e)
                             else:
                                 break
 
@@ -236,9 +245,13 @@ while True:
                             except UseeIsNOTlogin:
                                 print('Sorry You Neet To Login First')
                                 break
+                            except IdNotFound as e:
+                                print(e)
                             except Deactivate:
                                 print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
                                 break
+                            except MissingValue as e:
+                                print(e)
                             else:
                                 break
                     if Transfer_option == 4:
@@ -247,7 +260,8 @@ while True:
                                 print('\n**** Transfer Money From Savings To Another Account ****')
                                 amount = input('Pleas Enter the Amount You Like To Transfer: ')
                                 amount =int(amount)
-                                new_account.transfer_savings_to_another_account(amount)
+                                other_id =input('Please Enter The ID For The Account You Want Transfer To: ')
+                                new_account.transfer_savings_to_another_account(amount, other_id)
                             except ValueError :
                                 print("Please Enter a vaild amount of money")
                             except Declined:
@@ -257,6 +271,9 @@ while True:
                                 break
                             except IdNotFound as e:
                                 print(e)
+                            except Deactivate:
+                                print(f'Dear {user['first_name']} Your Accout Is Deactivate, \nKindly settle your outstanding balance. The amount credited to your account is {user['balance_checking']}$')
+                                break
                             else:
                                 break
                     if Transfer_option == 5:
@@ -273,12 +290,14 @@ while True:
                         else:
                             raise ValueError
                     except ValueError:
-                        print('Please Enter Q to Quit')
+                        pass
                         
                         
 
             if option == 5:
-                new_account.get_transaction_hisory()
+                data=new_account.get_transaction_hisory()
+                for row in data:
+                    print(row)
                 while True:
                     back = input('\nIf you want to go back enter Q: ')
                     try:
@@ -288,10 +307,14 @@ while True:
                         else:
                             raise ValueError 
                     except ValueError:
-                        print('Please Enter Q to Quit')
+                        pass
                         
 
             if option == 6:
+                new_account.generate_report()
+                
+            if option == 7:
+                new_account.logOut()
                 break
 
     if choice == 2:
@@ -322,7 +345,7 @@ while True:
                         else:
                             leter =any(l.isalpha() for l in password)
                             num =any(l.isdigit() for l in password)
-                            regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+                            regex = re.compile('[@_!#$%^&*()<>?/\\|}{~:]')
                             if regex.search(password) != None and leter and num and len(password)>=8 :
                                 break
                             else:
@@ -369,10 +392,10 @@ while True:
                                 print(f'Thank you For Choosing This Bank! Your overdraft limit will be {overdraft_limit}$')
                                 break
                             else:
-                                raise MissingValue('\nPlease enter a overdraft_limit that is a negative Number\n')                  
+                                raise MissingValue('\nThe overdraft limit must be a negative number\n')                  
 
                         else:
-                            raise MissingValue('\nPlease enter  Y to customize it or N to keep the defult:')
+                            raise MissingValue('\nPlease enter  Y to customize it or N to keep the defult')
                         
                     except MissingValue as e:
                         print(e)
@@ -393,15 +416,13 @@ while True:
                 else:
                     raise ValueError
             except ValueError:
-                print ('Please Enter B To Get Back')
+                pass
         
     # except ValueError:
     #     print("Please Enter a vaild input")
     # except MissingValue as e:
     #     print(e)
-    # else:
-    #     print(f'{first_name}\'s Account Have Been added successfully 🎉 \n')
-        
+            
 
 
 

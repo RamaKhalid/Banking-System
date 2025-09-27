@@ -26,7 +26,7 @@ class TeatOverdraftFee(unittest.TestCase):
         mock_input.assert_called_once_with('To continue Enter Y or N to stop: ')
 
 
-    @mock.patch('builtins.input', side_effect=['N'])
+    @mock.patch('builtins.input', side_effect=['N', 'n'])
     def test_overdraft_Protection_when_Transiction_stops(self, mock_input):
         #login
         self.new_account.login('10006', '1221' )
@@ -43,7 +43,7 @@ class TeatOverdraftFee(unittest.TestCase):
     @patch('builtins.print')
     def test_overdraft_Protection_when_Transiction_Exceeds_limit(self, mock_print):
         #login
-        self.new_account.login('10001', 'juagw362' )
-        self.new_account.withdraw_from_checking(155)
-        mock_print.assert_called_with('Sorry You can\'t Do This Transaction as you Exceeds the minimum limit allowed (less than -100$)')
+        self.new_account.login('10002', 'idh36%@#FGd' )
+        self.new_account.withdraw_from_checking(10100)
+        mock_print.assert_called_with('Sorry You can\'t Do This Transaction as it will Exceeds the minimum limit allowed with the fee (less than $-100)')
 

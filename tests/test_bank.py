@@ -8,7 +8,7 @@ from unittest.mock import patch
 class TestBanck(unittest.TestCase):
     def setUp(self):
         self.bank = Bank('bank.csv')
-        self.users =bank.get_customers()
+        self.users = self.bank.get_customers()
         
 
     def test_creating_bank_object(self):
@@ -24,7 +24,7 @@ class TestBanck(unittest.TestCase):
             for row in reader:
                 id = max(id, int(row['account_id']))
         
-        self.bank.add_customer(Customer('sara', 'ahmed',"sara1234" , 20000, 5000))
+        self.bank.add_customer(Customer('sara', 'ahmed',"sara1234" , 20000, 5000, -100))
         with open('bank.csv', 'r', encoding='utf-8') as f:
             total_rows = sum(1 for line in f)
         #check id is sequential
@@ -261,7 +261,7 @@ class TestAccountClass (unittest.TestCase):
         self.assertEqual(balance_savings-30 , new_balance_savings )
         self.assertEqual(new_user_balance_checking, user_balance_checking+30 )
 
-    @mock.patch('builtins.input', side_effect=['y', 'y'])
+    @mock.patch('builtins.input', side_effect=['y', 'y','y','y'])
     def test_deactivation(self, mock_input):
         #login
         self.new_account.login('10001', 'juagw362' )
@@ -279,7 +279,7 @@ class TestAccountClass (unittest.TestCase):
     def test_reactivat(self, mock_print):
         #login
         self.new_account.login('10001', 'juagw362' )
-        self.new_account.deposit_into_checking(55)
+        self.new_account.deposit_into_checking(90)
         mock_print.assert_called_with('Thank you for settling The outstanding dues. The account has been reactivated and is now fully operational')
     
     
