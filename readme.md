@@ -2,7 +2,7 @@
 
 A simple banking application written in **Python** that demonstrates account management, transactions, and reporting using Object-Oriented Programming (OOP) and Test-Driven Development (TDD).
 
-## Description
+## 🪙Description
 
 This project simulates a small-scale banking system where customers can open and manage checking and savings accounts. Users can deposit, withdraw, and transfer money, while the system enforces overdraft protection and logs all transactions. Account statements can be generated in text format, and a reward system highlights the top-performing customers.
 
@@ -19,5 +19,6 @@ The project is built with at least three core classes (plus test classes) and us
 * Custom overdraft limits per customer
 * Top 3 customers reward system with bonus
 * Fully tested with unit tests under TDD
+
 
 
